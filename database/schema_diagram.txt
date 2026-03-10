@@ -1,0 +1,78 @@
+DATABASE SCHEMA DIAGRAM (Text Format)
+=====================================
+
+USERS TABLE
+-----------
++----+-------+-------+----------+------------+------------+
+| id | name  | email | password | created_at | updated_at |
++----+-------+-------+----------+------------+------------+
+
+ROLES TABLE
+-----------
++----+--------+-------------+------------+------------+
+| id | name   | description | created_at | updated_at |
++----+--------+-------------+------------+------------+
+
+ROLE_USER TABLE (Pivot)
+---------------
++----+---------+---------+------------+------------+
+| id | user_id | role_id | created_at | updated_at |
++----+---------+---------+------------+------------+
+
+AUDIT_LOGS TABLE
+----------------
++----+---------+--------+------------+-----------+------------+------------+------------+
+| id | user_id | action | table_name | record_id | old_values | new_values | created_at |
++----+---------+--------+------------+-----------+------------+------------+------------+
+
+MASTER_DIESETS TABLE
+--------------------
++----+------+-------------+--------+------------+------------+------------+
+| id | name | description | status | created_at | updated_at | deleted_at |
++----+------+-------------+--------+------------+------------+------------+
+
+MASTER_PARTS TABLE
+------------------
++----+------+-------------+-----------+--------+------------+------------+------------+
+| id | name | description | dieset_id | status | created_at | updated_at | deleted_at |
++----+------+-------------+-----------+--------+------------+------------+------------+
+
+MASTER_INSPECTIONS TABLE
+------------------------
++----+------+-------------+---------+--------+------------+------------+------------+
+| id | name | description | part_id | status | created_at | updated_at | deleted_at |
++----+------+-------------+---------+--------+------------+------------+------------+
+
+RELATIONSHIPS
+-------------
+- users (many-to-many) roles via role_user
+- audit_logs belongs_to users
+- master_parts belongs_to master_diesets
+- master_inspections belongs_to master_parts
+
+INDEXES
+-------
+- roles.name (unique)
+- role_user.user_id, role_user.role_id (unique composite)
+- audit_logs.user_id, audit_logs.table_name, audit_logs.created_at
+- master_parts.dieset_id
+- master_inspections.part_id
+
+OBSERVERS
+---------
+- AuditObserver attached to: MasterDieset, MasterPart, MasterInspection
+
+MIDDLEWARE
+---------
+- RoleMiddleware: Checks if user has required role
+
+POLICIES
+--------
+- MasterDiesetPolicy: Admin only access, prevent delete if has parts
+
+ROUTES PROTECTION
+-----------------
+- Admin: master-diesets, master-parts, master-inspections, audit-logs
+- Supervisor: monitoring, export
+- Maintenance: inspections (CRUD except index/show)
+- Operator: inspections (create only)
