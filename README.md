@@ -1,59 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏭 Compotech - Diecast Application System (DAS)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+**Diecast Application System (DAS)** adalah sistem informasi berbasis web dan mobile untuk mengelola, merekam, dan memonitor data produksi serta *maintenance* komponen *Dieset* dan *Spare Parts* mesin Diecast. 
 
-## About Laravel
+Proyek ini dirancang dengan arsitektur **Clean Code, Performa Tinggi (Anti N+1 Query), dan Keamanan Standar DevSecOps**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🚀 Teknologi yang Digunakan (Tech Stack)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+*   **Framework:** Laravel 12.x (PHP 8.2+)
+*   **Frontend:** TailwindCSS, Alpine.js, Blade Components (Tanpa jQuery)
+*   **Database:** MySQL (Direkomendasikan menggunakan DBngin + DBeaver untuk Local Development)
+*   **Excel Export:** Maatwebsite / Laravel Excel
+*   **Authentication:** Laravel Breeze
+*   **Security & Tracking:** Custom Audit Logs (Observer Pattern) & Multi-Role Middleware
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🎯 Modul & Fitur yang Sudah Selesai (Phase 1)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 1. Keamanan & RBAC (Role-Based Access Control)
+- Multi-Role Middleware dinamis (`Admin`, `Supervisor`, `Maintenance`, `Operator`).
+- **Super Admin Bypass:** Role `Admin` memiliki akses absolut ke seluruh sistem tanpa hambatan *Middleware*.
+- **Audit Logs:** Perekaman otomatis (Siapa, Kapan, Modul Apa, dan Data Lama vs Data Baru) untuk operasi Create/Update/Delete menggunakan Eloquent Observer.
 
-## Laravel Sponsors
+### 2. Dieset Status (Monitoring Stok)
+- Menampilkan status setiap *Dieset* beserta relasi *Parts*-nya.
+- **Auto-Indicator:** Baris tabel otomatis berwarna **Pink/Merah** jika ada *part* di dalam *dieset* tersebut yang stoknya menipis (<= 2), dan **Hijau** jika stok aman.
+- View Detail memunculkan modal daftar part berdasarkan **kategori**, *actual shoot*, *max shoot*, dan gambar part.
+- Fitur *Export to Excel* pixel-perfect sesuai format perusahaan.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### 3. Inspection Monitor (Histori Perawatan)
+- Menampilkan riwayat inspeksi dari mekanik (Terintegrasi ke *Mobile App* di masa depan).
+- Filter data berdasarkan rentang waktu (*Date Range: Tanggal Awal & Tanggal Akhir*).
+- Menampilkan detail kerusakan, tindakan perbaikan, pergantian parts, dan bukti foto (*Evidence Photo*).
+- Fitur *Export to Excel* untuk laporan inspeksi.
 
-### Premium Partners
+### 4. Parts Stock & Email Notification
+- Resume stok *spare parts* dengan UI Tab Navigasi: **All Stock, Low Stock, Safe Stock**.
+- Fitur **Mail To SPV**: Mengumpulkan data parts dengan stok rendah (*Low Stock*), men-*generate* lampiran Excel otomatis, dan mengirimkannya via Email ke Supervisor yang terdaftar di sistem.
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+---
 
-## Contributing
+## 🚧 Modul Selanjutnya (Next To Do)
+- [ ] **Master Data:** CRUD lengkap untuk Master Dieset, Master Parts (Integrasi data "Wings"), dan Master Inspection.
+- [ ] **Administrator Settings:** Manajemen Operator (Mobile App Login) dan Email Report (Penerima Notifikasi).
+- [ ] **API Endpoint (Mobile App):** RESTful API untuk fitur inspeksi, *update actual shoot*, dan *upload image evidence* dari lantai produksi.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 💻 Cara Instalasi untuk Developer (Local Setup)
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Ikuti langkah-langkah berikut untuk menjalankan project ini di komputer Anda:
 
-## Security Vulnerabilities
+1. **Clone Repository:**
+   ```bash
+   git clone <url-repository-github-ini>
+   cd compotech
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Install Dependencies (PHP & Node.js):
 
-## License
+composer install
+npm install
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+2. Konfigurasi Environment:
+
+Copy file .env.example menjadi .env.
+
+Buka .env dan sesuaikan koneksi database Anda:
+
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=compotech_2026
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Settingan email lokal (Masuk ke storage/logs/laravel.log)
+MAIL_MAILER=log
+
+Generate App Key:
+
+php artisan key:generate
+
+3. Migrasi Database & Seeding (PENTING):
+Jalankan perintah ini untuk membuat struktur tabel dan mengisi Role dasar sistem:
+
+php artisan migrate --seed
+
+Symlink Storage (Untuk Gambar/File Upload):
+Agar gambar parts dan inspeksi bisa dirender di UI:
+
+php artisan storage:link
+
+5. Jalankan Aplikasi:
+Buka 2 tab terminal terpisah dan jalankan:
+
+# Terminal 1: Build asset frontend
+npm run dev
+
+# Terminal 2: Jalankan server PHP
+php artisan serve
+
+Akses Sistem:
+Buka http://127.0.0.1:8000 di browser Anda.
