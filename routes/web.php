@@ -1,13 +1,16 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\MasterDiesetController;
 use App\Http\Controllers\MasterPartController;
 use App\Http\Controllers\MasterInspectionController;
 use App\Http\Controllers\InspectionController;
 use App\Http\Controllers\DiesetStatusController;
-use App\Http\Controllers\PartsStockController; // ANDREW FIX: Controller baru untuk Parts Stock
+use App\Http\Controllers\PartsStockController;
+use App\Http\Controllers\OperatorController;
+use App\Http\Controllers\EmailReportController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -20,9 +23,8 @@ Route::middleware(['auth'])->group(function () {
     // =========================================================
     // DASHBOARD & PROFILE ROUTES
     // =========================================================
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // ANDREW FIX: Mengarahkan dashboard ke DashboardController yang baru kita buat
+    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -37,13 +39,27 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dieset-status/{id}', [DiesetStatusController::class, 'show'])->name('dieset-status.show');
 
     // =========================================================
-    // ADMINISTRATOR ROUTES (Master Data & Logs)
+    // ADMINISTRATOR ROUTES (Master Data, Operator, Email, Logs)
     // =========================================================
     Route::middleware([RoleMiddleware::class . ':Admin'])->group(function () {
+        
+        // --- Master Dieset ---
         Route::resource('master-diesets', MasterDiesetController::class);
+        Route::post('/master-diesets/{id}/generate-parts',[MasterDiesetController::class, 'storeGeneratedParts'])->name('master-diesets.generate-parts');
+        Route::put('/master-diesets/{dieset_id}/parts/{part_id}',[MasterDiesetController::class, 'updatePart'])->name('master-diesets.update-part');
+        Route::delete('/master-diesets/{dieset_id}/parts/{part_id}', [MasterDiesetController::class, 'destroyPart'])->name('master-diesets.destroy-part');
+
+        // --- Master Parts ---
+        Route::post('/master-parts/sync-wings', [MasterPartController::class, 'syncWings'])->name('master-parts.sync');
         Route::resource('master-parts', MasterPartController::class); 
+
+        // --- Master Inspections & Logs ---
         Route::resource('master-inspections', MasterInspectionController::class); 
         Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
+
+        // --- Administrator Settings ---
+        Route::resource('operators', OperatorController::class)->except(['create', 'show', 'edit']);
+        Route::resource('email-reports', EmailReportController::class)->except(['create', 'show', 'edit']);
     });
 
     // =========================================================

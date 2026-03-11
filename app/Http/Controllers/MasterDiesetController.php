@@ -3,103 +3,127 @@
 namespace App\Http\Controllers;
 
 use App\Models\MasterDieset;
+use App\Models\MasterPart;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Gate;
 
 class MasterDiesetController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index(): View
+    public function index(Request $request): View
     {
-        Gate::authorize('viewAny', MasterDieset::class);
+        $search = $request->input('search');
+        $perPage = $request->input('per_page', 10);
+        $query = MasterDieset::query();
 
-        $diesets = MasterDieset::paginate(15);
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%")->orWhere('product_code', 'like', "%{$search}%");
+        }
 
-        return view('admin.master-diesets.index', compact('diesets'));
+        $diesets = $query->orderBy('id', 'desc')->paginate($perPage);
+        return view('admin.master-diesets.index', compact('diesets', 'search', 'perPage'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create(): View
-    {
-        Gate::authorize('create', MasterDieset::class);
-
-        return view('admin.master-diesets.create');
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request): RedirectResponse
     {
-        Gate::authorize('create', MasterDieset::class);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:master_diesets',
-            'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'product_code' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255', 
+            'total_shoot' => 'nullable|integer|min:0',  
+            'production_year' => 'nullable|integer', 
         ]);
-
         MasterDieset::create($validated);
-
-        return redirect()->route('master-diesets.index')
-            ->with('success', 'Dieset created successfully.');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil ditambahkan!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(MasterDieset $masterDieset): View
-    {
-        Gate::authorize('view', $masterDieset);
-
-        return view('admin.master-diesets.show', compact('masterDieset'));
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MasterDieset $masterDieset): View
-    {
-        Gate::authorize('update', $masterDieset);
-
-        return view('admin.master-diesets.edit', compact('masterDieset'));
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, MasterDieset $masterDieset): RedirectResponse
     {
-        Gate::authorize('update', $masterDieset);
-
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:master_diesets,name,' . $masterDieset->id,
-            'description' => 'nullable|string',
-            'status' => 'required|in:active,inactive',
+            'product_code' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'total_shoot' => 'nullable|integer|min:0',
+            'production_year' => 'nullable|integer',
         ]);
-
         $masterDieset->update($validated);
-
-        return redirect()->route('master-diesets.index')
-            ->with('success', 'Dieset updated successfully.');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil diperbarui!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(MasterDieset $masterDieset): RedirectResponse
     {
-        Gate::authorize('delete', $masterDieset);
-
+        if ($masterDieset->parts()->count() > 0) {
+            return redirect()->route('master-diesets.index')->with('error', 'Gagal! Dieset tidak bisa dihapus karena memiliki Parts.');
+        }
         $masterDieset->delete();
+        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil dihapus!');
+    }
 
-        return redirect()->route('master-diesets.index')
-            ->with('success', 'Dieset deleted successfully.');
+    // =========================================================================
+    // FITUR ADVANCED: DETAIL ITEM PARTS (Halaman 21-24 PDF)
+    // =========================================================================
+    
+    public function show($id): View
+    {
+        $dieset = MasterDieset::with('parts')->findOrFail($id);
+        
+        // Mengelompokkan parts berdasarkan kategori agar UI Table bisa di-rowspan (Hal 21 PDF)
+        $groupedParts = $dieset->parts->groupBy('category');
+
+        return view('admin.master-diesets.show', compact('dieset', 'groupedParts'));
+    }
+
+    public function storeGeneratedParts(Request $request, $id)
+    {
+        $dieset = MasterDieset::findOrFail($id);
+        
+        $request->validate([
+            'category' => 'required|string|max:255',
+            'parts' => 'required|array',
+            'parts.*.cavity' => 'required|integer',
+            'parts.*.code' => 'required|string|max:255',
+            'parts.*.name' => 'required|string|max:255',
+            'parts.*.desc' => 'nullable|string|max:255',
+            'parts.*.shoot' => 'required|integer|min:0',
+        ]);
+
+        // Menyimpan semua baris yang digenerate oleh Alpine JS
+        foreach ($request->parts as $partData) {
+            $dieset->parts()->create([
+                'category' => $request->category,
+                'cavity_number' => $partData['cavity'],
+                'part_code' => $partData['code'],
+                'name' => $partData['name'],
+                'description' => $partData['desc'],
+                'actual_shoot' => $partData['shoot'],
+                'max_shoot' => 3000000, // Sesuai PDF default 3.000.000
+                'current_stock' => 0,
+                'status' => 'active'
+            ]);
+        }
+
+        return back()->with('success', 'Item Parts berhasil di-generate dan disimpan!');
+    }
+
+    public function updatePart(Request $request, $dieset_id, $part_id)
+    {
+        $part = MasterPart::where('dieset_id', $dieset_id)->findOrFail($part_id);
+        
+        $validated = $request->validate([
+            'part_code' => 'required|string|max:255',
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'actual_shoot' => 'required|integer|min:0',
+        ]);
+
+        $part->update($validated);
+        return back()->with('success', 'Data Part berhasil diperbarui!');
+    }
+
+    public function destroyPart($dieset_id, $part_id)
+    {
+        $part = MasterPart::where('dieset_id', $dieset_id)->findOrFail($part_id);
+        $part->delete();
+        return back()->with('success', 'Data Part berhasil dihapus!');
     }
 }

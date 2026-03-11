@@ -11,7 +11,9 @@ class MasterInspection extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = [
+    // ANDREW FIX: Menambahkan 'type' agar bisa disimpan
+    protected $fillable =[
+        'type',
         'name',
         'description',
         'part_id',
@@ -23,7 +25,6 @@ class MasterInspection extends Model
         static::observe(AuditObserver::class);
     }
 
-    // Relationships
     public function part()
     {
         return $this->belongsTo(MasterPart::class);

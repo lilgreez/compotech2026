@@ -23,6 +23,7 @@
                 <span class="text-sm font-medium">Dashboard</span>
             </a>
 
+            <!-- Placeholder untuk Monitoring Asset general (bisa dibiarkan # jika tidak dipakai) -->
             <a href="#" class="hover:bg-[#32394e] hover:text-white border-l-4 border-transparent flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
                 <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                 <span class="text-sm font-medium">Monitoring Asset</span>
@@ -33,19 +34,16 @@
         <div class="mb-6" x-show="sidebarOpen">
             <p class="px-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">DieSet</p>
             
-            <!-- Dieset Status -->
             <a href="{{ route('dieset-status.index') }}" class="{{ request()->routeIs('dieset-status.*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dieset-status.*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                 <span class="text-sm font-medium">Dieset Status</span>
             </a>
 
-            <!-- Inspection Monitor -->
             <a href="{{ route('monitoring') }}" class="{{ request()->routeIs('monitoring*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('monitoring*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"></path></svg>
                 <span class="text-sm font-medium">Inspection Monitor</span>
             </a>
 
-            <!-- Parts Stock -->
             <a href="{{ route('parts-stock.index') }}" class="{{ request()->routeIs('parts-stock.*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('parts-stock.*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                 <span class="text-sm font-medium">Parts Stock</span>
@@ -53,7 +51,6 @@
 
             <!-- Dropdown Master -->
             @php
-                // Logika agar menu Master otomatis terbuka jika user sedang membuka sub-menunya
                 $isMasterActive = request()->routeIs('master-diesets.*') || request()->routeIs('master-parts.*') || request()->routeIs('master-inspections.*');
             @endphp
             <div x-data="{ masterOpen: {{ $isMasterActive ? 'true' : 'false' }} }" class="mt-1">
@@ -79,8 +76,8 @@
         <div class="mb-6" x-show="sidebarOpen">
             <p class="px-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Administrator</p>
             
-            <a href="#" class="hover:bg-[#32394e] hover:text-white border-l-4 border-transparent flex items-center px-3 py-2.5 rounded-r-md transition-colors">
-                <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+            <a href="{{ route('operators.index') }}" class="{{ request()->routeIs('operators.*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('operators.*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
                 <span class="text-sm font-medium">Operator</span>
             </a>
 
@@ -89,9 +86,9 @@
                 <span class="text-sm font-medium">Audit Logs</span>
             </a>
 
-            <!-- Nanti route('export') bisa diganti ke route manajemen email report jika sudah dibuat -->
-            <a href="#" class="hover:bg-[#32394e] hover:text-white border-l-4 border-transparent flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
-                <svg class="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+            <!-- ANDREW FIX: Menu Email Report -->
+            <a href="{{ route('email-reports.index') }}" class="{{ request()->routeIs('email-reports.*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
+                <svg class="w-5 h-5 mr-3 {{ request()->routeIs('email-reports.*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                 <span class="text-sm font-medium">Email Report</span>
             </a>
         </div>
