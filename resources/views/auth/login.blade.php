@@ -30,10 +30,9 @@
         
         <div class="bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl shadow-slate-200/60 border border-slate-100">
             
-            <!-- Branding Header -->
-            <div class="flex flex-col items-center mb-10 text-center">
-                <h1 class="text-3xl font-extrabold text-slate-800 tracking-widest uppercase">Compotec2026</h1>
-                <p class="text-xs text-slate-400 font-bold mt-2 tracking-[0.2em]">SECURE SYSTEM ACCESS</p>
+            <!-- Branding Header (Logo Compotec) -->
+            <div class="flex flex-col items-center mb-8 text-center">
+                <img src="{{ asset('images/logo-compotec.jpg') }}" alt="PT Compotec International" class="h-28 w-auto object-contain">
             </div>
 
             <!-- Session Status -->
