@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Log in - Compotech DAS</title>
+    <title>Log in - Compotec2026 DAS</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -32,7 +32,7 @@
             
             <!-- Branding Header -->
             <div class="flex flex-col items-center mb-10 text-center">
-                <h1 class="text-3xl font-extrabold text-slate-800 tracking-widest uppercase">Compotech</h1>
+                <h1 class="text-3xl font-extrabold text-slate-800 tracking-widest uppercase">Compotec2026</h1>
                 <p class="text-xs text-slate-400 font-bold mt-2 tracking-[0.2em]">SECURE SYSTEM ACCESS</p>
             </div>
 
@@ -101,7 +101,7 @@
         <!-- Footer / Legal under the card -->
         <div class="mt-8 text-center">
             <p class="text-xs font-medium text-slate-400 tracking-wide">
-                &copy; {{ date('Y') }} Compotech Engineering. All rights reserved.
+                &copy; {{ date('Y') }} Compotec2026 Engineering. All rights reserved.
             </p>
         </div>
 
