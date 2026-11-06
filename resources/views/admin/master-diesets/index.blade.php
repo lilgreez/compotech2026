@@ -3,10 +3,39 @@
         showAddModal: false, 
         showEditModal: false, 
         showDeleteModal: false,
-        editData: { id: '', name: '', product_code: '', description: '', total_shoot: '', production_year: '' },
-        deleteData: { id: '', name: '' }
+        activeTab: 'identitas',
+        editTab: 'identitas',
+        editData: {
+            id: '',
+            kode_mold: '',
+            name: '',
+            cavity: '',
+            status: 'Active',
+            ownership: '',
+            type_cavity: '',
+            production_year: '',
+            dimensi_mold: '',
+            diameter_lokating_ring: '',
+            type_cooling: '',
+            type_eject: '',
+            type_gate: '',
+            type_mold: '',
+            ukuran_naple: '',
+            qty_naple: '',
+            naple_std_long: '',
+            jumlah_cavity_std: '',
+            jumlah_piston_slider: '',
+            jumlah_gasvent: '',
+            safety_mold: '',
+            qty_temp_channel_hr: '',
+            total_shoot: 0,
+            product_code: '',
+            description: ''
+        },
+        deleteData: { id: '', name: '', kode: '' }
     }">
     
+        <!-- Header -->
         <div class="px-6 py-5 bg-white border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div class="flex items-center space-x-3">
                 <div class="p-2.5 bg-blue-600 rounded-lg text-white shadow-sm">
@@ -14,33 +43,75 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-xl text-gray-800 leading-tight">Master Mold</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Kelola data master mold dan informasi produk</p>
+                    <p class="text-sm text-gray-500 mt-0.5">Database spesifikasi teknis mold, ownership, dan konfigurasi diecast</p>
                 </div>
             </div>
             
-            <button @click="showAddModal = true" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
+            <button @click="activeTab = 'identitas'; showAddModal = true" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
                 Add New Mold
             </button>
         </div>
 
-        <div class="p-6 max-w-7xl mx-auto">
+        <div class="p-6 max-w-7xl mx-auto space-y-6">
+            
+            <!-- Quick Summary KPI Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Mold</p>
+                        <p class="text-2xl font-bold text-gray-900 mt-1">{{ number_format($stats['total']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
+                        MS
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Mold Active</p>
+                        <p class="text-2xl font-bold text-emerald-600 mt-1">{{ number_format($stats['active']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Mold NA / Non-Active</p>
+                        <p class="text-2xl font-bold text-amber-600 mt-1">{{ number_format($stats['na']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer / Ownership</p>
+                        <p class="text-2xl font-bold text-indigo-600 mt-1">{{ number_format($stats['customers']) }}</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts -->
             @if (session('success'))
-                <div class="mb-6 bg-green-50 text-green-700 p-4 rounded-lg text-sm font-medium border border-green-200 flex items-center shadow-sm">
-                    <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('success') }}
+                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-lg text-sm font-medium border border-emerald-200 flex items-center shadow-sm">
+                    <svg class="w-5 h-5 mr-3 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
             @if (session('error'))
-                <div class="mb-6 bg-red-50 text-red-700 p-4 rounded-lg text-sm font-medium border border-red-200 flex items-center shadow-sm">
-                    <svg class="w-5 h-5 mr-3 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('error') }}
+                <div class="bg-rose-50 text-rose-800 p-4 rounded-lg text-sm font-medium border border-rose-200 flex items-center shadow-sm">
+                    <svg class="w-5 h-5 mr-3 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ session('error') }}</span>
                 </div>
             @endif
             @if ($errors->any())
-                <div class="mb-6 bg-red-50 text-red-700 p-4 rounded-lg text-sm border border-red-200 shadow-sm">
+                <div class="bg-rose-50 text-rose-800 p-4 rounded-lg text-sm border border-rose-200 shadow-sm">
                     <div class="font-semibold mb-1 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <svg class="w-5 h-5 mr-2 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         Terdapat kesalahan input:
                     </div>
                     <ul class="list-disc pl-9 space-y-1">
@@ -49,83 +120,232 @@
                 </div>
             @endif
 
+            <!-- Main Table Card -->
             <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
                 
-                <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <form method="GET" action="{{ route('master-diesets.index') }}" class="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- Table Controls / Filters -->
+                <div class="p-5 border-b border-gray-200 bg-gray-50/70">
+                    <form method="GET" action="{{ route('master-diesets.index') }}" class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
                         
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm text-gray-600 whitespace-nowrap">Show</span>
-                            <select name="per_page" class="w-20 border-gray-300 rounded-md py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm" onchange="this.form.submit()">
-                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                            </select>
-                            <span class="text-sm text-gray-600 whitespace-nowrap">entries</span>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Entries -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Show</span>
+                                <select name="per_page" class="border-gray-300 rounded-lg py-1.5 px-3 text-xs focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm" onchange="this.form.submit()">
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Status -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status:</span>
+                                <select name="status" class="border-gray-300 rounded-lg py-1.5 px-3 text-xs focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm" onchange="this.form.submit()">
+                                    <option value="">Semua Status</option>
+                                    <option value="Active" {{ $status == 'Active' ? 'selected' : '' }}>Active</option>
+                                    <option value="NA" {{ $status == 'NA' ? 'selected' : '' }}>NA</option>
+                                </select>
+                            </div>
+
+                            <!-- Filter Ownership -->
+                            <div class="flex items-center space-x-2 max-w-xs">
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer:</span>
+                                <select name="ownership" class="border-gray-300 rounded-lg py-1.5 px-3 text-xs focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm truncate" onchange="this.form.submit()">
+                                    <option value="">Semua Customer</option>
+                                    @foreach($ownershipList as $own)
+                                        <option value="{{ $own }}" {{ $ownership == $own ? 'selected' : '' }}>{{ $own }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            @if($search || $status || $ownership)
+                                <a href="{{ route('master-diesets.index') }}" class="px-2.5 py-1.5 text-xs font-medium text-gray-500 hover:text-red-600 bg-gray-100 hover:bg-red-50 rounded-lg transition-colors border border-gray-200">
+                                    Reset Filter
+                                </a>
+                            @endif
                         </div>
                         
-                        <div class="relative w-full sm:w-64">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <!-- Search Box -->
+                        <div class="relative w-full lg:w-80">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-2 pr-3 shadow-sm" placeholder="Cari Mold..." onchange="this.form.submit()">
+                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 py-2 pr-8 shadow-sm" placeholder="Cari Kode Mold, Nama, Customer, Dimensi...">
+                            @if($search)
+                                <a href="{{ route('master-diesets.index', array_merge(request()->except('search'))) }}" class="absolute inset-y-0 right-0 flex items-center pr-2.5 text-gray-400 hover:text-gray-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
 
+                <!-- Table Content -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left whitespace-nowrap">
+                    <table class="w-full text-xs text-left whitespace-nowrap">
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                             <tr>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center w-12 border-r border-gray-200">No.</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Mold Name</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Product Code</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Product Name</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Actual Shoot (Pcs)</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Marked Year</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center min-w-[140px]">Action</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center w-12 border-r border-gray-200">No.</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Kode Mold</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Nama Mold (New)</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Cavity</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Status</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Ownership / Customer</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Type Cavity</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Thn Mold</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Dimensi Mold</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Cooling / Gate / Mold</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center min-w-[150px]">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             @forelse($diesets as $index => $dieset)
-                                <tr class="bg-white hover:bg-blue-50/50 transition-colors group">
-                                    <td class="px-6 py-4 text-center text-gray-500 border-r border-gray-100">{{ $diesets->firstItem() + $index }}</td>
+                                <tr class="bg-white hover:bg-blue-50/40 transition-colors group">
+                                    <td class="px-4 py-3 text-center text-gray-400 border-r border-gray-100 font-mono">
+                                        {{ $diesets->firstItem() + $index }}
+                                    </td>
                                     
-                                    <td class="px-6 py-4 font-medium text-gray-900 border-r border-gray-100">
-                                        <a href="{{ route('master-diesets.show', $dieset->id) }}" class="text-blue-600 hover:text-blue-800 hover:underline flex items-center">
-                                            {{ $dieset->name }}
-                                            <svg class="w-3 h-3 ml-1 opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                                    <!-- Kode Mold -->
+                                    <td class="px-4 py-3 border-r border-gray-100 font-mono">
+                                        @if($dieset->kode_mold)
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                                                {{ $dieset->kode_mold }}
+                                            </span>
+                                        @else
+                                            <span class="text-gray-400 italic">- (Pending)</span>
+                                        @endif
+                                    </td>
+                                    
+                                    <!-- Nama Mold -->
+                                    <td class="px-4 py-3 font-semibold text-gray-900 border-r border-gray-100 max-w-xs truncate" title="{{ $dieset->name }}">
+                                        <a href="{{ route('master-diesets.show', $dieset->id) }}" class="text-blue-600 hover:text-blue-800 hover:underline inline-flex items-center">
+                                            <span>{{ $dieset->name }}</span>
+                                            <svg class="w-3.5 h-3.5 ml-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                                         </a>
                                     </td>
-                                    
-                                    <td class="px-6 py-4 text-center text-gray-600 border-r border-gray-100">
-                                        <span class="bg-gray-100 text-gray-700 py-1 px-2.5 rounded-md text-xs font-medium border border-gray-200">{{ $dieset->product_code ?? '-' }}</span>
+
+                                    <!-- Cavity -->
+                                    <td class="px-4 py-3 text-center border-r border-gray-100 font-semibold text-gray-700">
+                                        {{ $dieset->cavity ?? '-' }}
                                     </td>
-                                    <td class="px-6 py-4 text-gray-600 truncate max-w-xs border-r border-gray-100" title="{{ $dieset->description }}">{{ $dieset->description ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-center text-gray-700 font-medium border-r border-gray-100">{{ number_format($dieset->total_shoot) }}</td>
-                                    <td class="px-6 py-4 text-center text-gray-600 border-r border-gray-100">{{ $dieset->production_year ?? '-' }}</td>
+
+                                    <!-- Status -->
+                                    <td class="px-4 py-3 text-center border-r border-gray-100">
+                                        @if($dieset->status === 'Active')
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500"></span> Active
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                                <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-500"></span> NA
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Ownership -->
+                                    <td class="px-4 py-3 text-gray-700 border-r border-gray-100 max-w-xs truncate" title="{{ $dieset->ownership }}">
+                                        {{ $dieset->ownership ?? '-' }}
+                                    </td>
+
+                                    <!-- Type Cavity -->
+                                    <td class="px-4 py-3 text-center border-r border-gray-100">
+                                        <span class="px-2 py-0.5 rounded text-[11px] font-medium bg-gray-100 text-gray-700">
+                                            {{ $dieset->type_cavity ?? '-' }}
+                                        </span>
+                                    </td>
+
+                                    <!-- Thn Mold -->
+                                    <td class="px-4 py-3 text-center text-gray-600 border-r border-gray-100 font-mono">
+                                        {{ $dieset->production_year ?? '-' }}
+                                    </td>
+
+                                    <!-- Dimensi Mold -->
+                                    <td class="px-4 py-3 text-gray-700 border-r border-gray-100 font-mono text-[11px]">
+                                        {{ $dieset->dimensi_mold ?? '-' }}
+                                    </td>
+
+                                    <!-- Cooling / Gate / Mold Specs -->
+                                    <td class="px-4 py-3 text-gray-600 border-r border-gray-100">
+                                        <div class="flex items-center gap-1">
+                                            @if($dieset->type_cooling)
+                                                <span class="px-1.5 py-0.5 rounded text-[10px] bg-sky-50 text-sky-700 border border-sky-200" title="Cooling: {{ $dieset->type_cooling }}">
+                                                    {{ $dieset->type_cooling }}
+                                                </span>
+                                            @endif
+                                            @if($dieset->type_gate)
+                                                <span class="px-1.5 py-0.5 rounded text-[10px] bg-indigo-50 text-indigo-700 border border-indigo-200" title="Gate: {{ $dieset->type_gate }}">
+                                                    {{ $dieset->type_gate }}
+                                                </span>
+                                            @endif
+                                            @if($dieset->type_mold)
+                                                <span class="px-1.5 py-0.5 rounded text-[10px] bg-slate-100 text-slate-700" title="Mold Type: {{ $dieset->type_mold }}">
+                                                    {{ $dieset->type_mold }}
+                                                </span>
+                                            @endif
+                                            @if(!$dieset->type_cooling && !$dieset->type_gate && !$dieset->type_mold)
+                                                <span class="text-gray-400">-</span>
+                                            @endif
+                                        </div>
+                                    </td>
                                     
-                                    <td class="px-6 py-4 text-center">
-                                        <div class="flex justify-center space-x-2">
-                                            <button @click="editData = { id: {{ $dieset->id }}, name: '{{ addslashes($dieset->name) }}', product_code: '{{ addslashes($dieset->product_code) }}', description: '{{ addslashes($dieset->description) }}', total_shoot: '{{ $dieset->total_shoot }}', production_year: '{{ $dieset->production_year }}' }; showEditModal = true" 
-                                                    class="px-3 py-1.5 bg-blue-500 text-white rounded text-xs font-medium flex items-center hover:bg-blue-600 shadow-sm transition">
-                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit
+                                    <!-- Actions -->
+                                    <td class="px-4 py-3 text-center">
+                                        <div class="flex items-center justify-center space-x-1.5">
+                                            <a href="{{ route('master-diesets.show', $dieset->id) }}" 
+                                               class="p-1.5 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200" 
+                                               title="Detail Spesifikasi Mold & Parts">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
+                                            </a>
+
+                                            <button @click="editData = {
+                                                id: {{ $dieset->id }},
+                                                kode_mold: '{{ addslashes($dieset->kode_mold ?? '') }}',
+                                                name: '{{ addslashes($dieset->name ?? '') }}',
+                                                cavity: '{{ addslashes($dieset->cavity ?? '') }}',
+                                                status: '{{ addslashes($dieset->status ?? 'Active') }}',
+                                                ownership: '{{ addslashes($dieset->ownership ?? '') }}',
+                                                type_cavity: '{{ addslashes($dieset->type_cavity ?? '') }}',
+                                                production_year: '{{ addslashes($dieset->production_year ?? '') }}',
+                                                dimensi_mold: '{{ addslashes($dieset->dimensi_mold ?? '') }}',
+                                                diameter_lokating_ring: '{{ addslashes($dieset->diameter_lokating_ring ?? '') }}',
+                                                type_cooling: '{{ addslashes($dieset->type_cooling ?? '') }}',
+                                                type_eject: '{{ addslashes($dieset->type_eject ?? '') }}',
+                                                type_gate: '{{ addslashes($dieset->type_gate ?? '') }}',
+                                                type_mold: '{{ addslashes($dieset->type_mold ?? '') }}',
+                                                ukuran_naple: '{{ addslashes($dieset->ukuran_naple ?? '') }}',
+                                                qty_naple: '{{ addslashes($dieset->qty_naple ?? '') }}',
+                                                naple_std_long: '{{ addslashes($dieset->naple_std_long ?? '') }}',
+                                                jumlah_cavity_std: '{{ addslashes($dieset->jumlah_cavity_std ?? '') }}',
+                                                jumlah_piston_slider: '{{ addslashes($dieset->jumlah_piston_slider ?? '') }}',
+                                                jumlah_gasvent: '{{ addslashes($dieset->jumlah_gasvent ?? '') }}',
+                                                safety_mold: '{{ addslashes($dieset->safety_mold ?? '') }}',
+                                                qty_temp_channel_hr: '{{ addslashes($dieset->qty_temp_channel_hr ?? '') }}',
+                                                total_shoot: '{{ $dieset->total_shoot ?? 0 }}',
+                                                product_code: '{{ addslashes($dieset->product_code ?? '') }}',
+                                                description: '{{ addslashes($dieset->description ?? '') }}'
+                                            }; editTab = 'identitas'; showEditModal = true" 
+                                                    class="p-1.5 text-gray-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-transparent hover:border-amber-200"
+                                                    title="Edit Data Mold">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                             </button>
                                             
-                                            <button @click="deleteData = { id: {{ $dieset->id }}, name: '{{ addslashes($dieset->name) }}' }; showDeleteModal = true" 
-                                                    class="px-3 py-1.5 bg-red-500 text-white rounded text-xs font-medium flex items-center hover:bg-red-600 shadow-sm transition">
-                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Delete
+                                            <button @click="deleteData = { id: {{ $dieset->id }}, name: '{{ addslashes($dieset->name) }}', kode: '{{ addslashes($dieset->kode_mold ?? '-') }}' }; showDeleteModal = true" 
+                                                    class="p-1.5 text-gray-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-200"
+                                                    title="Hapus Mold">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="px-6 py-12 text-center">
+                                    <td colspan="11" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                            <p class="text-gray-500 font-medium text-base">Belum ada data Master Mold</p>
-                                            <p class="text-gray-400 text-sm mt-1">Silakan klik tombol "Add New Mold" untuk menambahkan data.</p>
+                                            <p class="text-gray-600 font-semibold text-sm">Tidak ditemukan data Master Mold</p>
+                                            <p class="text-gray-400 text-xs mt-1">Coba sesuaikan kata kunci pencarian atau filter yang dipilih.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -134,37 +354,43 @@
                     </table>
                 </div>
 
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-4">
-                    <div>Showing <span class="font-medium text-gray-900">{{ $diesets->firstItem() ?? 0 }}</span> to <span class="font-medium text-gray-900">{{ $diesets->lastItem() ?? 0 }}</span> of <span class="font-medium text-gray-900">{{ $diesets->total() }}</span> entries</div>
+                <!-- Pagination Footer -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-4">
+                    <div>
+                        Menampilkan <span class="font-bold text-gray-900">{{ $diesets->firstItem() ?? 0 }}</span> sampai <span class="font-bold text-gray-900">{{ $diesets->lastItem() ?? 0 }}</span> dari <span class="font-bold text-gray-900">{{ $diesets->total() }}</span> total mold
+                    </div>
                     <div>{{ $diesets->appends(request()->query())->links('pagination::tailwind') }}</div>
                 </div>
             </div>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- MODAL TAMBAH DATA MOLD (Lengkap 21 Kolom Sesuai Excel Database) -->
+        <!-- =================================================================== -->
         <div x-show="showAddModal" 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm" 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 overflow-y-auto" 
              style="display: none;" 
-             x-transition:enter="transition ease-out duration-300" 
+             x-transition:enter="transition ease-out duration-200" 
              x-transition:enter-start="opacity-0" 
              x-transition:enter-end="opacity-100" 
-             x-transition:leave="transition ease-in duration-200" 
+             x-transition:leave="transition ease-in duration-150" 
              x-transition:leave-start="opacity-100" 
              x-transition:leave-end="opacity-0" 
              x-cloak>
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all" 
-                 @click.away="showAddModal = false"
-                 x-transition:enter="transition ease-out duration-300" 
-                 x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" 
-                 x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" 
-                 x-transition:leave="transition ease-in duration-200" 
-                 x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" 
-                 x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all my-8" 
+                 @click.away="showAddModal = false">
                 
-                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
-                    <h3 class="text-gray-800 font-bold text-lg flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Data Mold
-                    </h3>
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-slate-50">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-900 font-bold text-base leading-tight">Tambah Master Mold Baru</h3>
+                            <p class="text-xs text-gray-500">Input spesifikasi lengkap sesuai database Mold MS</p>
+                        </div>
+                    </div>
                     <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -172,55 +398,221 @@
 
                 <form action="{{ route('master-diesets.store') }}" method="POST">
                     @csrf
-                    <div class="p-6 space-y-5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mold Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" required placeholder="Contoh: Mold A" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Code</label>
-                                <input type="text" name="product_code" placeholder="Contoh: PRD-001" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Marked Year</label>
-                                <input type="number" name="production_year" placeholder="Contoh: 2024" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Name / Description</label>
-                                <input type="text" name="description" placeholder="Deskripsi produk..." class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Actual Shoot (Pcs)</label>
-                                <input type="number" name="total_shoot" placeholder="0" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
+                    
+                    <!-- Modal Navigation Tabs -->
+                    <div class="px-6 pt-3 bg-white border-b border-gray-200 flex space-x-6 text-xs font-semibold">
+                        <button type="button" @click="activeTab = 'identitas'" :class="activeTab === 'identitas' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            1. Identitas & Kepemilikan
+                        </button>
+                        <button type="button" @click="activeTab = 'mekanikal'" :class="activeTab === 'mekanikal' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            2. Spesifikasi Mekanikal & Dimensi
+                        </button>
+                        <button type="button" @click="activeTab = 'cooling'" :class="activeTab === 'cooling' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            3. Cooling, Naple & Hardware
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 max-h-[70vh] overflow-y-auto space-y-5">
+                        
+                        <!-- TAB 1: IDENTITAS -->
+                        <div x-show="activeTab === 'identitas'" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Kode Mold</label>
+                                    <input type="text" name="kode_mold" placeholder="Contoh: M000.01.2022" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                    <span class="text-[10px] text-gray-400">Format: M-kode cust (3 digit) - No. Urut (2 digit).thn (4 digit)</span>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Nama Mold (New) <span class="text-rose-500">*</span></label>
+                                    <input type="text" name="name" required placeholder="Contoh: Mold Cap Hole" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Status <span class="text-rose-500">*</span></label>
+                                    <select name="status" required class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="Active">Active</option>
+                                        <option value="NA">NA (Non-Active)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Cavity</label>
+                                    <input type="text" name="cavity" placeholder="Contoh: 4, 8, 16, 1+1" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Cavity</label>
+                                    <select name="type_cavity" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Cavity</option>
+                                        <option value="Single">Single</option>
+                                        <option value="Family">Family</option>
+                                        <option value="Interchange">Interchange</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership / Customer</label>
+                                    <input type="text" name="ownership" list="customer-list" placeholder="Contoh: Compotec International, PT" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Tahun Mold (Thn Mold)</label>
+                                    <input type="text" name="production_year" placeholder="Contoh: 2022" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Cavity STD</label>
+                                    <input type="text" name="jumlah_cavity_std" placeholder="Contoh: 4, 8, 16, 32" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Product Code</label>
+                                    <input type="text" name="product_code" placeholder="Contoh: PRD-001" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Total Shoot</label>
+                                    <input type="number" name="total_shoot" value="0" min="0" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
                             </div>
                         </div>
+
+                        <!-- TAB 2: MEKANIKAL & DIMENSI -->
+                        <div x-show="activeTab === 'mekanikal'" class="space-y-4" style="display: none;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Dimensi Mold (P x L x T)</label>
+                                    <input type="text" name="dimensi_mold" placeholder="Contoh: 250 x 300 x 270" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Diameter Lokating Ring</label>
+                                    <input type="text" name="diameter_lokating_ring" placeholder="Contoh: 100, 120, 100 - 120" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Mold</label>
+                                    <select name="type_mold" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Mold</option>
+                                        <option value="Two Plate">Two Plate</option>
+                                        <option value="Three Plate">Three Plate</option>
+                                        <option value="Triple Plate">Triple Plate</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Eject</label>
+                                    <select name="type_eject" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Eject</option>
+                                        <option value="STD">STD</option>
+                                        <option value="OnFly">OnFly</option>
+                                        <option value="Hydraulic">Hydraulic</option>
+                                        <option value="Direct Mc">Direct Mc</option>
+                                        <option value="STD & OnFly">STD & OnFly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Gate</label>
+                                    <select name="type_gate" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Gate</option>
+                                        <option value="Side Gate">Side Gate</option>
+                                        <option value="Pin Point">Pin Point</option>
+                                        <option value="Sub Marine">Sub Marine</option>
+                                        <option value="Sprue">Sprue</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Safety Mold</label>
+                                    <input type="text" name="safety_mold" placeholder="Sensor / Limit Switch" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Piston Slider</label>
+                                    <input type="text" name="jumlah_piston_slider" placeholder="Contoh: - atau 2" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Gasvent</label>
+                                    <input type="text" name="jumlah_gasvent" placeholder="Contoh: - atau 4" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Qty Temperature Controller HR</label>
+                                    <input type="text" name="qty_temp_channel_hr" placeholder="Contoh: HR 10 Zone, HR 6 Zone" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: COOLING & NAPLE -->
+                        <div x-show="activeTab === 'cooling'" class="space-y-4" style="display: none;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Cooling</label>
+                                    <select name="type_cooling" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Cooling</option>
+                                        <option value="Chiller">Chiller</option>
+                                        <option value="MTC">MTC</option>
+                                        <option value="Cooling Tower">Cooling Tower</option>
+                                        <option value="Cool Tower & Chiller">Cool Tower & Chiller</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ukuran Naple Cooling</label>
+                                    <input type="text" name="ukuran_naple" placeholder="Contoh: 1/4, 1/8, 1/2, 3/4" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Qty Naple</label>
+                                    <input type="text" name="qty_naple" placeholder="Contoh: 8, 16, 28, 32, 48" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Naple STD / Long</label>
+                                    <select name="naple_std_long" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Jenis Naple</option>
+                                        <option value="STD">STD</option>
+                                        <option value="Long">Long</option>
+                                        <option value="STD / Long">STD / Long</option>
+                                        <option value="Coupler">Coupler</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Keterangan / Deskripsi Produk</label>
+                                    <input type="text" name="description" placeholder="Catatan tambahan spesifikasi produk..." class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     
-                    <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
-                        <button type="button" @click="showAddModal = false" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition shadow-sm">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Simpan Data
-                        </button>
+                    <!-- Modal Footer -->
+                    <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <div class="text-xs text-gray-400">
+                            Pastikan data spesifikasi sesuai dokumen teknis
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="button" @click="showAddModal = false" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition shadow-sm">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-xs font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition shadow-sm">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Simpan Data Mold
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- MODAL EDIT DATA MOLD (Lengkap 21 Kolom Sesuai Excel Database) -->
+        <!-- =================================================================== -->
         <div x-show="showEditModal" 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm" 
-             style="display: none;"
-             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 overflow-y-auto" 
+             style="display: none;" 
+             x-transition:enter="transition ease-out duration-200" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" 
+             x-transition:leave-start="opacity-100" 
+             x-transition:leave-end="opacity-0" 
              x-cloak>
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 overflow-hidden transform transition-all" 
-                 @click.away="showEditModal = false"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden transform transition-all my-8" 
+                 @click.away="showEditModal = false">
                 
-                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
-                    <h3 class="text-gray-800 font-bold text-lg flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Edit Data Mold
-                    </h3>
+                <!-- Modal Header -->
+                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-slate-50">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="text-gray-900 font-bold text-base leading-tight">Edit Data Master Mold</h3>
+                            <p class="text-xs text-gray-500">Perbarui informasi teknis mold: <span class="font-semibold text-gray-800" x-text="editData.name"></span></p>
+                        </div>
+                    </div>
                     <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
@@ -229,70 +621,238 @@
                 <form :action="`/master-diesets/${editData.id}`" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="p-6 space-y-5">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mold Name <span class="text-red-500">*</span></label>
-                                <input type="text" name="name" x-model="editData.name" required class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Code</label>
-                                <input type="text" name="product_code" x-model="editData.product_code" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Marked Year</label>
-                                <input type="number" name="production_year" x-model="editData.production_year" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Product Name / Description</label>
-                                <input type="text" name="description" x-model="editData.description" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
-                            </div>
-                            <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Actual Shoot (Pcs)</label>
-                                <input type="number" name="total_shoot" x-model="editData.total_shoot" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
+                    
+                    <!-- Navigation Tabs -->
+                    <div class="px-6 pt-3 bg-white border-b border-gray-200 flex space-x-6 text-xs font-semibold">
+                        <button type="button" @click="editTab = 'identitas'" :class="editTab === 'identitas' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            1. Identitas & Kepemilikan
+                        </button>
+                        <button type="button" @click="editTab = 'mekanikal'" :class="editTab === 'mekanikal' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            2. Spesifikasi Mekanikal & Dimensi
+                        </button>
+                        <button type="button" @click="editTab = 'cooling'" :class="editTab === 'cooling' ? 'border-b-2 border-blue-600 text-blue-600 pb-2.5' : 'text-gray-500 hover:text-gray-800 pb-2.5'">
+                            3. Cooling, Naple & Hardware
+                        </button>
+                    </div>
+
+                    <!-- Modal Body -->
+                    <div class="p-6 max-h-[70vh] overflow-y-auto space-y-5">
+                        
+                        <!-- TAB 1: IDENTITAS -->
+                        <div x-show="editTab === 'identitas'" class="space-y-4">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Kode Mold</label>
+                                    <input type="text" name="kode_mold" x-model="editData.kode_mold" placeholder="Contoh: M000.01.2022" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Nama Mold (New) <span class="text-rose-500">*</span></label>
+                                    <input type="text" name="name" x-model="editData.name" required class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Status <span class="text-rose-500">*</span></label>
+                                    <select name="status" x-model="editData.status" required class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="Active">Active</option>
+                                        <option value="NA">NA (Non-Active)</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Cavity</label>
+                                    <input type="text" name="cavity" x-model="editData.cavity" placeholder="Contoh: 4, 8, 16, 1+1" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Cavity</label>
+                                    <select name="type_cavity" x-model="editData.type_cavity" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Cavity</option>
+                                        <option value="Single">Single</option>
+                                        <option value="Family">Family</option>
+                                        <option value="Interchange">Interchange</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership / Customer</label>
+                                    <input type="text" name="ownership" x-model="editData.ownership" list="customer-list" placeholder="Contoh: Compotec International, PT" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Tahun Mold (Thn Mold)</label>
+                                    <input type="text" name="production_year" x-model="editData.production_year" placeholder="Contoh: 2022" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Cavity STD</label>
+                                    <input type="text" name="jumlah_cavity_std" x-model="editData.jumlah_cavity_std" placeholder="Contoh: 4, 8, 16, 32" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Product Code</label>
+                                    <input type="text" name="product_code" x-model="editData.product_code" placeholder="Contoh: PRD-001" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Total Shoot</label>
+                                    <input type="number" name="total_shoot" x-model="editData.total_shoot" min="0" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
                             </div>
                         </div>
+
+                        <!-- TAB 2: MEKANIKAL & DIMENSI -->
+                        <div x-show="editTab === 'mekanikal'" class="space-y-4" style="display: none;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Dimensi Mold (P x L x T)</label>
+                                    <input type="text" name="dimensi_mold" x-model="editData.dimensi_mold" placeholder="Contoh: 250 x 300 x 270" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Diameter Lokating Ring</label>
+                                    <input type="text" name="diameter_lokating_ring" x-model="editData.diameter_lokating_ring" placeholder="Contoh: 100, 120, 100 - 120" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Mold</label>
+                                    <select name="type_mold" x-model="editData.type_mold" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Mold</option>
+                                        <option value="Two Plate">Two Plate</option>
+                                        <option value="Three Plate">Three Plate</option>
+                                        <option value="Triple Plate">Triple Plate</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Eject</label>
+                                    <select name="type_eject" x-model="editData.type_eject" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Eject</option>
+                                        <option value="STD">STD</option>
+                                        <option value="OnFly">OnFly</option>
+                                        <option value="Hydraulic">Hydraulic</option>
+                                        <option value="Direct Mc">Direct Mc</option>
+                                        <option value="STD & OnFly">STD & OnFly</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Gate</label>
+                                    <select name="type_gate" x-model="editData.type_gate" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Gate</option>
+                                        <option value="Side Gate">Side Gate</option>
+                                        <option value="Pin Point">Pin Point</option>
+                                        <option value="Sub Marine">Sub Marine</option>
+                                        <option value="Sprue">Sprue</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Safety Mold</label>
+                                    <input type="text" name="safety_mold" x-model="editData.safety_mold" placeholder="Sensor / Limit Switch" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Piston Slider</label>
+                                    <input type="text" name="jumlah_piston_slider" x-model="editData.jumlah_piston_slider" placeholder="Contoh: - atau 2" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Jumlah Gasvent</label>
+                                    <input type="text" name="jumlah_gasvent" x-model="editData.jumlah_gasvent" placeholder="Contoh: - atau 4" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Qty Temperature Controller HR</label>
+                                    <input type="text" name="qty_temp_channel_hr" x-model="editData.qty_temp_channel_hr" placeholder="Contoh: HR 10 Zone, HR 6 Zone" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TAB 3: COOLING & NAPLE -->
+                        <div x-show="editTab === 'cooling'" class="space-y-4" style="display: none;">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Type Cooling</label>
+                                    <select name="type_cooling" x-model="editData.type_cooling" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Type Cooling</option>
+                                        <option value="Chiller">Chiller</option>
+                                        <option value="MTC">MTC</option>
+                                        <option value="Cooling Tower">Cooling Tower</option>
+                                        <option value="Cool Tower & Chiller">Cool Tower & Chiller</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ukuran Naple Cooling</label>
+                                    <input type="text" name="ukuran_naple" x-model="editData.ukuran_naple" placeholder="Contoh: 1/4, 1/8, 1/2, 3/4" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Qty Naple</label>
+                                    <input type="text" name="qty_naple" x-model="editData.qty_naple" placeholder="Contoh: 8, 16, 28, 32, 48" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Naple STD / Long</label>
+                                    <select name="naple_std_long" x-model="editData.naple_std_long" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500 bg-white">
+                                        <option value="">Pilih Jenis Naple</option>
+                                        <option value="STD">STD</option>
+                                        <option value="Long">Long</option>
+                                        <option value="STD / Long">STD / Long</option>
+                                        <option value="Coupler">Coupler</option>
+                                    </select>
+                                </div>
+                                <div class="sm:col-span-2">
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Keterangan / Deskripsi Produk</label>
+                                    <input type="text" name="description" x-model="editData.description" placeholder="Catatan tambahan spesifikasi produk..." class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     
-                    <div class="flex justify-end items-center px-6 py-4 bg-gray-50 border-t border-gray-200 space-x-3">
-                        <button type="button" @click="showEditModal = false" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
-                        <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition shadow-sm">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg> Simpan Perubahan
-                        </button>
+                    <!-- Modal Footer -->
+                    <div class="flex justify-between items-center px-6 py-4 bg-gray-50 border-t border-gray-200">
+                        <div class="text-xs text-gray-400">
+                            Perubahan akan langsung tercatat pada audit trail
+                        </div>
+                        <div class="flex space-x-2">
+                            <button type="button" @click="showEditModal = false" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition shadow-sm">Batal</button>
+                            <button type="submit" class="px-4 py-2 bg-amber-600 text-white rounded-lg text-xs font-medium flex items-center hover:bg-amber-700 focus:ring-4 focus:ring-amber-100 transition shadow-sm">
+                                <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg> Simpan Perubahan
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- =================================================================== -->
+        <!-- MODAL HAPUS DATA MOLD -->
+        <!-- =================================================================== -->
         <div x-show="showDeleteModal" 
-             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm" 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" 
              style="display: none;"
-             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             x-transition:enter="transition ease-out duration-200" 
+             x-transition:enter-start="opacity-0" 
+             x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" 
+             x-transition:leave-start="opacity-100" 
+             x-transition:leave-end="opacity-0"
              x-cloak>
             <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 overflow-hidden transform transition-all" 
-                 @click.away="showDeleteModal = false"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
-                
+                 @click.away="showDeleteModal = false">
                 <div class="p-6 text-center">
-                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-5">
-                        <svg class="text-red-600 w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div class="mx-auto flex items-center justify-center w-14 h-14 rounded-full bg-rose-100 mb-4">
+                        <svg class="text-rose-600 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Hapus Mold?</h3>
-                    <p class="mb-6 text-sm text-gray-500">Anda yakin ingin menghapus data <span class="font-bold text-gray-800" x-text="deleteData.name"></span>? Data yang dihapus tidak dapat dikembalikan.</p>
+                    <h3 class="text-base font-bold text-gray-900 mb-1.5">Hapus Master Mold?</h3>
+                    <p class="mb-5 text-xs text-gray-500 leading-relaxed">
+                        Anda yakin ingin menghapus <span class="font-bold text-gray-800" x-text="deleteData.name"></span> (<span class="font-mono text-gray-700" x-text="deleteData.kode"></span>)?<br>
+                        Data mold yang memiliki item parts tidak dapat dihapus.
+                    </p>
                     
-                    <div class="flex justify-center space-x-3">
-                        <button @click="showDeleteModal = false" class="text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium px-5 py-2.5 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
+                    <div class="flex justify-center space-x-2">
+                        <button @click="showDeleteModal = false" class="text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-xs font-medium px-4 py-2 transition shadow-sm">Batal</button>
                         <form :action="`/master-diesets/${deleteData.id}`" method="POST" class="inline-flex">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="text-white bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium px-5 py-2.5 focus:ring-4 focus:ring-red-200 transition shadow-sm">
-                                Ya, Hapus Data
+                            <button type="submit" class="text-white bg-rose-600 hover:bg-rose-700 rounded-lg text-xs font-medium px-4 py-2 transition shadow-sm">
+                                Ya, Hapus Mold
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
+        <!-- Datalist untuk Autocomplete Ownership / Customer -->
+        <datalist id="customer-list">
+            @foreach($ownershipList as $own)
+                <option value="{{ $own }}">
+            @endforeach
+        </datalist>
 
     </div>
 </x-app-layout>

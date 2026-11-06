@@ -83,21 +83,173 @@
                 </div>
             @endif
 
+            <!-- Mold Full Technical Specifications (Excel Database MS) -->
+            <div class="mb-6 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+                <!-- Header Banner -->
+                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                            {{ $dieset->cavity ? $dieset->cavity . 'C' : 'MD' }}
+                        </div>
+                        <div>
+                            <div class="flex items-center space-x-2">
+                                <h3 class="text-lg font-bold text-gray-900">{{ $dieset->name }}</h3>
+                                @if($dieset->status === 'Active')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500"></span> Active
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-500"></span> NA
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-gray-500 font-mono">
+                                <span>Kode: <strong class="text-gray-800">{{ $dieset->kode_mold ?? '-' }}</strong></span>
+                                <span class="text-gray-300">|</span>
+                                <span>Cust: <strong class="text-gray-800 font-sans">{{ $dieset->ownership ?? 'Compotec' }}</strong></span>
+                                @if($dieset->product_code)
+                                    <span class="text-gray-300">|</span>
+                                    <span>Part No: <strong class="text-gray-800">{{ $dieset->product_code }}</strong></span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <div class="text-left md:text-right">
+                            <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block">Total Shoot</span>
+                            <span class="text-base font-bold text-gray-900 font-mono">{{ number_format($dieset->total_shoot) }} Pcs</span>
+                        </div>
+                        <a href="{{ route('master-diesets.index') }}" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition shadow-sm">
+                            Kembali ke Index
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 4 Specification Groups -->
+                <div class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 bg-white text-xs">
+                    <!-- Group 1: Identitas & Cavity -->
+                    <div class="space-y-3 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div class="flex items-center text-blue-700 font-bold uppercase tracking-wider text-[11px] border-b border-gray-200 pb-1.5">
+                            <svg class="w-4 h-4 mr-1.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            Identitas Mold
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Cavity:</span>
+                                <span class="font-bold text-gray-900">{{ $dieset->cavity ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Type Cavity:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->type_cavity ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Cavity STD:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->jumlah_cavity_std ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Tahun Mold:</span>
+                                <span class="font-mono text-gray-800">{{ $dieset->production_year ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 2: Dimensi & Mekanikal -->
+                    <div class="space-y-3 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div class="flex items-center text-indigo-700 font-bold uppercase tracking-wider text-[11px] border-b border-gray-200 pb-1.5">
+                            <svg class="w-4 h-4 mr-1.5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"></path></svg>
+                            Dimensi & Mekanikal
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Dimensi Mold:</span>
+                                <span class="font-mono font-semibold text-gray-900">{{ $dieset->dimensi_mold ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Lokating Ring:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->diameter_lokating_ring ? 'Ø ' . $dieset->diameter_lokating_ring : '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Type Mold:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->type_mold ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Type Eject:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->type_eject ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Type Gate:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->type_gate ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 3: Cooling & Piping -->
+                    <div class="space-y-3 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div class="flex items-center text-sky-700 font-bold uppercase tracking-wider text-[11px] border-b border-gray-200 pb-1.5">
+                            <svg class="w-4 h-4 mr-1.5 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                            Sistem Cooling & Piping
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Type Cooling:</span>
+                                <span class="font-semibold text-sky-700">{{ $dieset->type_cooling ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Ukuran Naple:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->ukuran_naple ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Qty Naple:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->qty_naple ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Naple STD/Long:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->naple_std_long ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Group 4: Hardware & Hot Runner -->
+                    <div class="space-y-3 bg-gray-50/50 p-4 rounded-lg border border-gray-100">
+                        <div class="flex items-center text-amber-700 font-bold uppercase tracking-wider text-[11px] border-b border-gray-200 pb-1.5">
+                            <svg class="w-4 h-4 mr-1.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                            Hot Runner & Hardware
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Temp HR Control:</span>
+                                <span class="font-semibold text-rose-700">{{ $dieset->qty_temp_channel_hr ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Safety Mold:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->safety_mold ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Piston Slider:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->jumlah_piston_slider ?? '-' }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-gray-500">Gasvent:</span>
+                                <span class="font-semibold text-gray-800">{{ $dieset->jumlah_gasvent ?? '-' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if($dieset->description)
+                    <div class="px-6 py-3 bg-gray-50 border-t border-gray-200 text-xs text-gray-600 flex items-center">
+                        <strong class="text-gray-700 mr-2">Catatan Produk:</strong> {{ $dieset->description }}
+                    </div>
+                @endif
+            </div>
+
+            <!-- Bagian Komponen & Parts Mold -->
             <div class="mb-6 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
                 <div class="bg-gray-50/50 border-b border-gray-200 px-6 py-4 flex justify-between items-center">
                     <div>
-                        <h3 class="text-lg font-bold text-gray-900">{{ $dieset->name }}</h3>
-                        <div class="mt-1 flex items-center text-sm text-gray-600 space-x-4">
-                            <span class="flex items-center"><svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg> {{ $dieset->product_code }}</span>
-                            <span class="text-gray-300">|</span>
-                            <span>{{ $dieset->description }}</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            Active Mold
-                        </span>
-                        <p class="text-xs text-gray-500 mt-1">Total Shoot: {{ number_format($dieset->total_shoot) }}</p>
+                        <h3 class="text-base font-bold text-gray-900">Daftar Komponen & Item Parts</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Konfigurasi part komponen, cavity per part, dan batas shoot maintenance</p>
                     </div>
                 </div>
                 

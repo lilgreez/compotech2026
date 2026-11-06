@@ -11,13 +11,31 @@ class MasterDieset extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable =[
+    protected $fillable = [
+        'kode_mold',
         'name',
-        'product_code',
-        'production_year',
-        'total_shoot',
-        'description',
+        'cavity',
         'status',
+        'ownership',
+        'type_cavity',
+        'production_year',
+        'dimensi_mold',
+        'diameter_lokating_ring',
+        'type_cooling',
+        'type_eject',
+        'type_gate',
+        'type_mold',
+        'ukuran_naple',
+        'qty_naple',
+        'naple_std_long',
+        'jumlah_cavity_std',
+        'jumlah_piston_slider',
+        'jumlah_gasvent',
+        'safety_mold',
+        'qty_temp_channel_hr',
+        'total_shoot',
+        'product_code',
+        'description',
     ];
 
     protected static function booted(): void

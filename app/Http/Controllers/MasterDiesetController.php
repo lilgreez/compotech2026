@@ -13,61 +13,143 @@ class MasterDiesetController extends Controller
     public function index(Request $request): View
     {
         $search = $request->input('search');
-        $perPage = $request->input('per_page', 10);
+        $status = $request->input('status');
+        $ownership = $request->input('ownership');
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+
         $query = MasterDieset::query();
 
         if ($search) {
-            $query->where('name', 'like', "%{$search}%")->orWhere('product_code', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_mold', 'like', "%{$search}%")
+                  ->orWhere('name', 'like', "%{$search}%")
+                  ->orWhere('ownership', 'like', "%{$search}%")
+                  ->orWhere('product_code', 'like', "%{$search}%")
+                  ->orWhere('dimensi_mold', 'like', "%{$search}%")
+                  ->orWhere('type_cavity', 'like', "%{$search}%");
+            });
+        }
+
+        if ($status && in_array($status, ['Active', 'NA'])) {
+            $query->where('status', $status);
+        }
+
+        if ($ownership) {
+            $query->where('ownership', $ownership);
         }
 
         $diesets = $query->orderBy('id', 'desc')->paginate($perPage);
-        return view('admin.master-diesets.index', compact('diesets', 'search', 'perPage'));
+
+        $stats = [
+            'total' => MasterDieset::count(),
+            'active' => MasterDieset::where('status', 'Active')->count(),
+            'na' => MasterDieset::where('status', 'NA')->count(),
+            'customers' => MasterDieset::whereNotNull('ownership')->where('ownership', '!=', '')->distinct('ownership')->count('ownership'),
+        ];
+
+        $ownershipList = MasterDieset::whereNotNull('ownership')
+            ->where('ownership', '!=', '')
+            ->distinct()
+            ->orderBy('ownership')
+            ->pluck('ownership');
+
+        return view('admin.master-diesets.index', compact('diesets', 'search', 'status', 'ownership', 'perPage', 'stats', 'ownershipList'));
     }
 
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:master_diesets',
+            'kode_mold' => 'nullable|string|max:100',
+            'name' => 'required|string|max:255',
+            'cavity' => 'nullable|string|max:50',
+            'status' => 'required|string|in:Active,NA',
+            'ownership' => 'nullable|string|max:255',
+            'type_cavity' => 'nullable|string|max:50',
+            'production_year' => 'nullable|string|max:50',
+            'dimensi_mold' => 'nullable|string|max:100',
+            'diameter_lokating_ring' => 'nullable|string|max:50',
+            'type_cooling' => 'nullable|string|max:50',
+            'type_eject' => 'nullable|string|max:50',
+            'type_gate' => 'nullable|string|max:50',
+            'type_mold' => 'nullable|string|max:50',
+            'ukuran_naple' => 'nullable|string|max:50',
+            'qty_naple' => 'nullable|string|max:50',
+            'naple_std_long' => 'nullable|string|max:50',
+            'jumlah_cavity_std' => 'nullable|string|max:50',
+            'jumlah_piston_slider' => 'nullable|string|max:50',
+            'jumlah_gasvent' => 'nullable|string|max:50',
+            'safety_mold' => 'nullable|string|max:100',
+            'qty_temp_channel_hr' => 'nullable|string|max:100',
+            'total_shoot' => 'nullable|integer|min:0',
             'product_code' => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:255', 
-            'total_shoot' => 'nullable|integer|min:0',  
-            'production_year' => 'nullable|integer', 
+            'description' => 'nullable|string|max:1000',
         ]);
+
+        if (empty($validated['status'])) {
+            $validated['status'] = 'Active';
+        }
+        if (!isset($validated['total_shoot'])) {
+            $validated['total_shoot'] = 0;
+        }
+
         MasterDieset::create($validated);
-        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil ditambahkan!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Master Mold berhasil ditambahkan!');
     }
 
     public function update(Request $request, MasterDieset $masterDieset): RedirectResponse
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:master_diesets,name,' . $masterDieset->id,
-            'product_code' => 'nullable|string|max:255',
-            'description' => 'nullable|string|max:255',
+            'kode_mold' => 'nullable|string|max:100',
+            'name' => 'required|string|max:255',
+            'cavity' => 'nullable|string|max:50',
+            'status' => 'required|string|in:Active,NA',
+            'ownership' => 'nullable|string|max:255',
+            'type_cavity' => 'nullable|string|max:50',
+            'production_year' => 'nullable|string|max:50',
+            'dimensi_mold' => 'nullable|string|max:100',
+            'diameter_lokating_ring' => 'nullable|string|max:50',
+            'type_cooling' => 'nullable|string|max:50',
+            'type_eject' => 'nullable|string|max:50',
+            'type_gate' => 'nullable|string|max:50',
+            'type_mold' => 'nullable|string|max:50',
+            'ukuran_naple' => 'nullable|string|max:50',
+            'qty_naple' => 'nullable|string|max:50',
+            'naple_std_long' => 'nullable|string|max:50',
+            'jumlah_cavity_std' => 'nullable|string|max:50',
+            'jumlah_piston_slider' => 'nullable|string|max:50',
+            'jumlah_gasvent' => 'nullable|string|max:50',
+            'safety_mold' => 'nullable|string|max:100',
+            'qty_temp_channel_hr' => 'nullable|string|max:100',
             'total_shoot' => 'nullable|integer|min:0',
-            'production_year' => 'nullable|integer',
+            'product_code' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:1000',
         ]);
+
         $masterDieset->update($validated);
-        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil diperbarui!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Master Mold berhasil diperbarui!');
     }
 
     public function destroy(MasterDieset $masterDieset): RedirectResponse
     {
         if ($masterDieset->parts()->count() > 0) {
-            return redirect()->route('master-diesets.index')->with('error', 'Gagal! Mold tidak bisa dihapus karena memiliki Parts.');
+            return redirect()->route('master-diesets.index')->with('error', 'Gagal! Mold tidak bisa dihapus karena memiliki item Parts.');
         }
         $masterDieset->delete();
-        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil dihapus!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Master Mold berhasil dihapus!');
     }
 
     // =========================================================================
-    // FITUR ADVANCED: DETAIL ITEM PARTS (Halaman 21-24 PDF)
+    // DETAIL ITEM PARTS (Sesuai Spesifikasi Teknis & Komponen Mold)
     // =========================================================================
     
     public function show($id): View
     {
         $dieset = MasterDieset::with('parts')->findOrFail($id);
         
-        // Mengelompokkan parts berdasarkan kategori agar UI Table bisa di-rowspan (Hal 21 PDF)
+        // Mengelompokkan parts berdasarkan kategori agar UI Table bisa di-rowspan
         $groupedParts = $dieset->parts->groupBy('category');
 
         return view('admin.master-diesets.show', compact('dieset', 'groupedParts'));
@@ -87,7 +169,6 @@ class MasterDiesetController extends Controller
             'parts.*.shoot' => 'required|integer|min:0',
         ]);
 
-        // Menyimpan semua baris yang digenerate oleh Alpine JS
         foreach ($request->parts as $partData) {
             $dieset->parts()->create([
                 'category' => $request->category,
@@ -96,7 +177,7 @@ class MasterDiesetController extends Controller
                 'name' => $partData['name'],
                 'description' => $partData['desc'],
                 'actual_shoot' => $partData['shoot'],
-                'max_shoot' => 3000000, // Sesuai PDF default 3.000.000
+                'max_shoot' => 3000000,
                 'current_stock' => 0,
                 'status' => 'active'
             ]);
