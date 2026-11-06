@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
 
         // --- Master Parts ---
         Route::post('/master-parts/sync-wings', [MasterPartController::class, 'syncWings'])->name('master-parts.sync');
+        Route::post('/master-parts/import-excel', [MasterPartController::class, 'importExcel'])->name('master-parts.import-excel');
         Route::resource('master-parts', MasterPartController::class); 
 
         // --- Master Inspections & Logs ---

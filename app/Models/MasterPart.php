@@ -15,11 +15,21 @@ class MasterPart extends Model
         'name',
         'part_code',
         'description',
+        'category',
         'dieset_id',
         'cavity_number',
+        'actual_shoot',
+        'max_shoot',
+        'item_notes',
         'current_stock',
         'image_path',
         'status',
+    ];
+
+    protected $casts = [
+        'current_stock' => 'integer',
+        'max_shoot' => 'integer',
+        'actual_shoot' => 'integer',
     ];
 
     public function inspectionHistories()

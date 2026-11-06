@@ -3,147 +3,314 @@
         showAddModal: false, 
         showEditModal: false, 
         showDeleteModal: false,
-        formData: { id: '', code: '', name: '', desc: '', max_shoot: '', notes: '' },
+        showImportModal: false,
+        formData: { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' },
         imagePreview: null,
         
         fileChosen(event) {
             this.fileToDataUrl(event, src => this.imagePreview = src)
         },
         fileToDataUrl(event, callback) {
-            if (! event.target.files.length) return
+            if (!event.target.files.length) return
             let file = event.target.files[0], reader = new FileReader()
             reader.readAsDataURL(file)
             reader.onload = e => callback(e.target.result)
         },
         openEdit(part) {
-            this.formData = { id: part.id, code: part.part_code, name: part.name, desc: part.description, max_shoot: part.max_shoot, notes: part.item_notes };
+            this.formData = { 
+                id: part.id, 
+                code: part.part_code || '', 
+                name: part.name || '', 
+                desc: part.description || part.name || '', 
+                stock: part.current_stock || 0,
+                max_shoot: part.max_shoot || 3000000, 
+                notes: part.item_notes || '' 
+            };
             this.imagePreview = part.image_path ? '/storage/' + part.image_path : null;
             this.showEditModal = true;
+        },
+        openDelete(part) {
+            this.formData = { 
+                id: part.id, 
+                code: part.part_code || '', 
+                name: part.name || '' 
+            };
+            this.showDeleteModal = true;
         }
     }">
 
+        <!-- Page Header -->
         <div class="px-6 py-5 bg-white border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="p-2.5 bg-indigo-600 rounded-lg text-white shadow-sm">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+            <div class="flex items-center space-x-3.5">
+                <div class="p-2.5 bg-slate-900 rounded-lg text-white shadow-sm">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                 </div>
                 <div>
-                    <h2 class="font-bold text-xl text-gray-800 leading-tight">Master Katalog Parts</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Kelola data master komponen dan spesifikasinya</p>
+                    <h2 class="font-bold text-xl text-gray-900 leading-tight">Master Parts</h2>
+                    <p class="text-sm text-gray-500 mt-0.5">Database master suku cadang mold, kontrol kuantitas stok, dan parameter lifecycle</p>
                 </div>
             </div>
             
-            <div class="flex flex-wrap gap-3 w-full md:w-auto">
-                <form action="{{ route('master-parts.sync') }}" method="POST" class="inline">
+            <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                <button type="button" @click="showImportModal = true" class="w-full sm:w-auto px-3.5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium flex items-center justify-center hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all shadow-sm">
+                    <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    Upload Excel
+                </button>
+
+                <form action="{{ route('master-parts.sync') }}" method="POST" class="inline w-full sm:w-auto">
                     @csrf
-                    <button type="submit" class="w-full md:w-auto px-4 py-2 bg-orange-500 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-orange-600 focus:ring-4 focus:ring-orange-100 transition-all shadow-sm">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
+                    <button type="submit" class="w-full sm:w-auto px-3.5 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-amber-600 focus:ring-4 focus:ring-amber-100 transition-all shadow-sm">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
                         Sync from Wings
                     </button>
                 </form>
                 
-                <button @click="imagePreview = null; showAddModal = true" class="w-full md:w-auto px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-100 transition-all shadow-sm">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                    Insert Data
+                <button @click="imagePreview = null; formData = { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' }; showAddModal = true" class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
+                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
+                    Tambah Part
                 </button>
             </div>
         </div>
 
-        <div class="p-6 max-w-7xl mx-auto">
+        <div class="p-6 max-w-7xl mx-auto space-y-6">
+            
+            <!-- Alert Notifications -->
             @if (session('success'))
-                <div class="mb-6 bg-green-50 text-green-700 p-4 rounded-lg text-sm font-medium border border-green-200 flex items-center shadow-sm">
-                    <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="mb-6 bg-red-50 text-red-700 p-4 rounded-lg text-sm border border-red-200 shadow-sm">
-                    <div class="font-semibold mb-1 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        Terdapat kesalahan input:
-                    </div>
-                    <ul class="list-disc pl-9 space-y-1">@foreach ($errors->all() as $error) <li>{{ $error }}</li> @endforeach</ul>
+                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-xl text-sm font-medium border border-emerald-200 flex items-center shadow-sm">
+                    <svg class="w-5 h-5 mr-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
+            @if ($errors->any())
+                <div class="bg-red-50 text-red-800 p-4 rounded-xl text-sm border border-red-200 shadow-sm">
+                    <div class="font-semibold mb-1 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        Terdapat kesalahan input:
+                    </div>
+                    <ul class="list-disc pl-9 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- KPI Metric Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- Card 1: Total Master Items -->
+                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Master Parts</p>
+                            <h3 class="text-2xl font-bold text-gray-900 mt-1.5 tabular-nums">{{ number_format($totalParts) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">Item katalog aktif</p>
+                        </div>
+                        <div class="p-3 bg-slate-100 rounded-lg text-slate-700">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Total Stock Qty -->
+                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Kuantitas Stok</p>
+                            <h3 class="text-2xl font-bold text-blue-600 mt-1.5 tabular-nums">{{ number_format($totalStock) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">Akumulasi seluruh part</p>
+                        </div>
+                        <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Safe Stock (> 2) -->
+                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Stok Aman (> 2)</p>
+                            <h3 class="text-2xl font-bold text-emerald-600 mt-1.5 tabular-nums">{{ number_format($safeStock) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">Level cadangan aman</p>
+                        </div>
+                        <div class="p-3 bg-emerald-50 rounded-lg text-emerald-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 4: Critical Stock (<= 2) -->
+                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Stok Kritis (<= 2)</p>
+                            <h3 class="text-2xl font-bold {{ $criticalStock > 0 ? 'text-red-600' : 'text-gray-900' }} mt-1.5 tabular-nums">{{ number_format($criticalStock) }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">Perlu restock segera</p>
+                        </div>
+                        <div class="p-3 {{ $criticalStock > 0 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500' }} rounded-lg">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Table Container -->
             <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
                 
-                <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex flex-col sm:flex-row justify-between items-center gap-4">
-                    <form method="GET" action="{{ route('master-parts.index') }}" class="w-full flex flex-col sm:flex-row justify-between items-center gap-4">
+                <!-- Filter Bar -->
+                <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
+                    <form method="GET" action="{{ route('master-parts.index') }}" class="w-full flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
                         
-                        <div class="flex items-center space-x-2">
-                            <span class="text-sm text-gray-600 whitespace-nowrap">Show</span>
-                            <select name="per_page" class="w-20 border-gray-300 rounded-md py-1.5 px-3 text-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-700 bg-white shadow-sm" onchange="this.form.submit()">
-                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                            </select>
-                            <span class="text-sm text-gray-600 whitespace-nowrap">entries</span>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <!-- Entries per page -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-semibold uppercase text-gray-500">Show:</span>
+                                <select name="per_page" class="border-gray-300 rounded-lg py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm cursor-pointer" onchange="this.form.submit()">
+                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                                </select>
+                            </div>
+
+                            <!-- Stock Filter Tabs -->
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-semibold uppercase text-gray-500">Status Stok:</span>
+                                <select name="stock_filter" class="border-gray-300 rounded-lg py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm cursor-pointer" onchange="this.form.submit()">
+                                    <option value="all" {{ ($stockFilter ?? 'all') == 'all' ? 'selected' : '' }}>Semua Stok ({{ $totalParts }})</option>
+                                    <option value="safe" {{ ($stockFilter ?? '') == 'safe' ? 'selected' : '' }}>Stok Aman (> 2)</option>
+                                    <option value="critical" {{ ($stockFilter ?? '') == 'critical' ? 'selected' : '' }}>Stok Kritis (<= 2)</option>
+                                    <option value="empty" {{ ($stockFilter ?? '') == 'empty' ? 'selected' : '' }}>Stok Kosong (= 0)</option>
+                                </select>
+                            </div>
                         </div>
                         
-                        <div class="relative w-full sm:w-64">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <!-- Search Box -->
+                        <div class="relative w-full md:w-80">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 py-2 pr-3 shadow-sm transition-shadow" placeholder="Cari Part..." onchange="this.form.submit()">
+                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 pr-8 py-2 shadow-sm transition" placeholder="Cari Item No. atau Deskripsi..." onkeydown="if(event.key === 'Enter') this.form.submit()">
+                            @if($search)
+                                <a href="{{ route('master-parts.index', ['per_page' => $perPage, 'stock_filter' => $stockFilter]) }}" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                                </a>
+                            @endif
                         </div>
                     </form>
                 </div>
 
+                <!-- Table Content -->
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left whitespace-nowrap">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
+                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80 border-b border-gray-200">
                             <tr>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200 w-16">No.</th>
-                                <th scope="col" class="px-6 py-4 font-semibold border-r border-gray-200 text-center">Item Image</th>
-                                <th scope="col" class="px-6 py-4 font-semibold border-r border-gray-200">Item Code</th>
-                                <th scope="col" class="px-6 py-4 font-semibold border-r border-gray-200">Item Name</th>
-                                <th scope="col" class="px-6 py-4 font-semibold border-r border-gray-200">Item Desc</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-right border-r border-gray-200">Max Shoot</th>
-                                <th scope="col" class="px-6 py-4 font-semibold border-r border-gray-200">Item Notes</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-center min-w-[140px]">Action</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200 w-16">No.</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Item No. / Part Code</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Description / Part Name</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200">Cumulative Stock</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-right border-r border-gray-200">Max Shoot</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200">Foto</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Notes</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center min-w-[140px]">Action</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             @forelse($parts as $index => $part)
-                                <tr class="bg-white hover:bg-blue-50/50 transition-colors group">
-                                    <td class="px-6 py-4 text-center text-gray-500 border-r border-gray-100">{{ $parts->firstItem() + $index }}</td>
-                                    
-                                    <td class="px-6 py-3 text-center border-r border-gray-100">
-                                        <div class="flex justify-center items-center">
-                                            @if($part->image_path)
-                                                <img src="{{ asset('storage/'.$part->image_path) }}" alt="image" class="h-10 w-14 object-cover rounded border border-gray-200 shadow-sm transition-transform transform group-hover:scale-110">
-                                            @else
-                                                <div class="flex flex-col items-center justify-center h-10 w-14 bg-gray-50 rounded border border-gray-200 border-dashed">
-                                                    <span class="text-[9px] text-gray-400 italic">No img</span>
-                                                </div>
-                                            @endif
-                                        </div>
+                                <tr class="bg-white hover:bg-slate-50/80 transition-colors {{ $part->current_stock <= 2 ? 'bg-red-50/20' : '' }}">
+                                    <!-- No. -->
+                                    <td class="px-5 py-3.5 text-center text-gray-500 border-r border-gray-100 tabular-nums">
+                                        {{ $parts->firstItem() + $index }}
                                     </td>
                                     
-                                    <td class="px-6 py-4 text-gray-900 border-r border-gray-100 font-bold">{{ $part->part_code }}</td>
-                                    <td class="px-6 py-4 text-gray-800 border-r border-gray-100 font-medium">{{ $part->name }}</td>
-                                    <td class="px-6 py-4 text-gray-600 border-r border-gray-100 truncate max-w-[200px]" title="{{ $part->description }}">{{ $part->description ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-right text-indigo-600 font-semibold border-r border-gray-100">{{ number_format($part->max_shoot) }}</td>
-                                    <td class="px-6 py-4 text-gray-500 border-r border-gray-100 italic text-xs truncate max-w-[150px]" title="{{ $part->item_notes }}">{{ $part->item_notes ?? '-' }}</td>
+                                    <!-- Item No / Code -->
+                                    <td class="px-5 py-3.5 border-r border-gray-100">
+                                        <div class="font-mono font-bold text-gray-900 tracking-tight text-xs bg-gray-100 px-2 py-1 rounded inline-block">
+                                            {{ $part->part_code }}
+                                        </div>
+                                    </td>
+
+                                    <!-- Description / Name -->
+                                    <td class="px-5 py-3.5 border-r border-gray-100">
+                                        <div class="font-semibold text-gray-900">{{ $part->name }}</div>
+                                        @if($part->description && $part->description !== $part->name)
+                                            <div class="text-xs text-gray-500 mt-0.5 truncate max-w-xs" title="{{ $part->description }}">{{ $part->description }}</div>
+                                        @endif
+                                    </td>
+
+                                    <!-- Cumulative Stock -->
+                                    <td class="px-5 py-3.5 text-center border-r border-gray-100">
+                                        @if($part->current_stock <= 2)
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold tabular-nums bg-red-50 text-red-700 border border-red-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
+                                                {{ number_format($part->current_stock) }} pcs
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold tabular-nums bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                                                {{ number_format($part->current_stock) }} pcs
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Max Shoot -->
+                                    <td class="px-5 py-3.5 text-right border-r border-gray-100 font-mono font-medium text-slate-700 tabular-nums">
+                                        {{ number_format($part->max_shoot) }}
+                                    </td>
+
+                                    <!-- Foto -->
+                                    <td class="px-5 py-2.5 text-center border-r border-gray-100">
+                                        @if($part->image_path)
+                                            <div class="flex justify-center items-center">
+                                                <img src="{{ asset('storage/'.$part->image_path) }}" alt="{{ $part->part_code }}" class="h-9 w-12 object-cover rounded border border-gray-200 shadow-sm hover:scale-110 transition-transform">
+                                            </div>
+                                        @else
+                                            <span class="text-[11px] text-gray-400 italic">No image</span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Notes -->
+                                    <td class="px-5 py-3.5 text-gray-500 border-r border-gray-100 text-xs truncate max-w-[180px]" title="{{ $part->item_notes }}">
+                                        {{ $part->item_notes ?: '-' }}
+                                    </td>
                                     
-                                    <td class="px-6 py-4 text-center">
-                                        <div class="flex justify-center space-x-2">
-                                            <button @click="openEdit({{ $part->toJson() }})" class="px-3 py-1.5 bg-blue-500 text-white rounded text-xs font-medium flex items-center hover:bg-blue-600 shadow-sm transition">
+                                    <!-- Action -->
+                                    <td class="px-5 py-3.5 text-center">
+                                        <div class="flex justify-center items-center space-x-1.5">
+                                            <button type="button" @click="openEdit({{ $part->toJson() }})" class="px-2.5 py-1.5 bg-blue-600 text-white rounded text-xs font-medium inline-flex items-center hover:bg-blue-700 shadow-sm transition">
                                                 <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit
                                             </button>
-                                            <button @click="formData = { id: {{ $part->id }}, code: '{{ addslashes($part->part_code) }}' }; showDeleteModal = true" class="px-3 py-1.5 bg-red-500 text-white rounded text-xs font-medium flex items-center hover:bg-red-600 shadow-sm transition">
-                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Delete
+                                            <button type="button" @click="openDelete({{ $part->toJson() }})" class="px-2.5 py-1.5 bg-red-600 text-white rounded text-xs font-medium inline-flex items-center hover:bg-red-700 shadow-sm transition">
+                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Hapus
                                             </button>
                                         </div>
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="8" class="px-6 py-12 text-center">
-                                        <div class="flex flex-col items-center justify-center">
-                                            <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                            <p class="text-gray-500 font-medium text-base">Belum ada data Katalog Parts.</p>
+                                    <td colspan="8" class="px-6 py-14 text-center">
+                                        <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
+                                            <div class="p-3 bg-gray-100 rounded-full text-gray-400 mb-3">
+                                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                            </div>
+                                            <h4 class="text-base font-bold text-gray-800">Tidak ada data Master Parts</h4>
+                                            <p class="text-sm text-gray-500 mt-1 mb-4">
+                                                @if($search || ($stockFilter && $stockFilter !== 'all'))
+                                                    Tidak ditemukan part dengan kata kunci atau filter yang Anda tentukan.
+                                                @else
+                                                    Belum ada katalog spare part yang tersimpan di sistem.
+                                                @endif
+                                            </p>
+                                            @if($search || ($stockFilter && $stockFilter !== 'all'))
+                                                <a href="{{ route('master-parts.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold transition">
+                                                    Reset Filter
+                                                </a>
+                                            @else
+                                                <button type="button" @click="showImportModal = true" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                                                    Upload File Excel
+                                                </button>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>
@@ -152,26 +319,36 @@
                     </table>
                 </div>
 
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-4">
-                    <div>Showing <span class="font-medium text-gray-900">{{ $parts->firstItem() ?? 0 }}</span> to <span class="font-medium text-gray-900">{{ $parts->lastItem() ?? 0 }}</span> of <span class="font-medium text-gray-900">{{ $parts->total() }}</span> entries</div>
-                    <div>{{ $parts->appends(request()->query())->links('pagination::tailwind') }}</div>
+                <!-- Pagination footer -->
+                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-4">
+                    <div>
+                        Menampilkan <span class="font-semibold text-gray-900 tabular-nums">{{ $parts->firstItem() ?? 0 }}</span> sampai <span class="font-semibold text-gray-900 tabular-nums">{{ $parts->lastItem() ?? 0 }}</span> dari total <span class="font-semibold text-gray-900 tabular-nums">{{ number_format($parts->total()) }}</span> parts
+                    </div>
+                    <div>
+                        {{ $parts->appends(request()->query())->links('pagination::tailwind') }}
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- ======================================================== -->
+        <!-- MODAL 1: TAMBAH PART BARU                                -->
+        <!-- ======================================================== -->
         <div x-show="showAddModal" 
              class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" 
              style="display: none;"
-             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
              x-cloak>
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-full" 
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" 
                  @click.away="showAddModal = false"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" 
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
                 
-                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
-                    <h3 class="text-gray-800 font-bold text-lg flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Parts Baru
+                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-gray-900 font-bold text-lg flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Tambah Master Part Baru
                     </h3>
                     <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -182,43 +359,48 @@
                     @csrf
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code <span class="text-red-500">*</span></label>
-                            <input type="text" name="part_code" required placeholder="Contoh: A800737" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Item No. / Part Code <span class="text-red-500">*</span></label>
+                            <input type="text" name="part_code" required placeholder="Contoh: AM01.0001.00" class="w-full font-mono border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" required placeholder="Contoh: ANGULAR PIN" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
-                        </div>
-                        
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Description</label>
-                            <input type="text" name="description" placeholder="Deskripsi part..." class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Nama Part / Description <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" required placeholder="Contoh: Neeple 1/2''" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Max Shoot <span class="text-red-500">*</span></label>
-                            <input type="number" name="max_shoot" required placeholder="Batas maksimal shoot" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Kuantitas Stok (Cumulative Qty) <span class="text-red-500">*</span></label>
+                            <input type="number" name="current_stock" required min="0" value="0" class="w-full tabular-nums border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
+                        </div>
+
+                        <div class="sm:col-span-1">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Max Shoot <span class="text-red-500">*</span></label>
+                            <input type="number" name="max_shoot" required min="0" value="3000000" class="w-full tabular-nums border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Deskripsi Lengkap (Opsional)</label>
+                            <input type="text" name="description" placeholder="Rincian spesifikasi..." class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Notes (Opsional)</label>
-                            <textarea name="item_notes" rows="2" placeholder="Catatan tambahan..." class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"></textarea>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Item Notes / Keterangan (Opsional)</label>
+                            <textarea name="item_notes" rows="2" placeholder="Catatan tambahan spare part..." class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"></textarea>
                         </div>
                         
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Foto Part</label>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Foto Part (Opsional)</label>
                             <div class="flex items-start space-x-4">
                                 <div class="flex-1">
                                     <input type="file" name="image" id="fileUploadAdd" class="hidden" accept="image/*" @change="fileChosen">
                                     <div class="relative rounded-lg shadow-sm">
-                                        <input type="text" readonly placeholder="Klik tombol di samping untuk memilih gambar" class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm py-2 pl-3 pr-24 text-gray-500 focus:ring-0 cursor-not-allowed" :value="imagePreview ? 'Gambar dipilih' : ''">
-                                        <button type="button" onclick="document.getElementById('fileUploadAdd').click()" class="absolute inset-y-0 right-0 px-4 text-sm font-medium text-white bg-indigo-500 rounded-r-lg hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300">
-                                            Browse
+                                        <input type="text" readonly placeholder="Pilih foto part..." class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm py-2 pl-3 pr-24 text-gray-500 focus:ring-0 cursor-not-allowed" :value="imagePreview ? 'Foto telah dipilih' : ''">
+                                        <button type="button" onclick="document.getElementById('fileUploadAdd').click()" class="absolute inset-y-0 right-0 px-4 text-sm font-medium text-white bg-slate-700 rounded-r-lg hover:bg-slate-800 focus:ring-4 focus:ring-slate-300">
+                                            Pilih File
                                         </button>
                                     </div>
-                                    <p class="mt-1 text-[11px] text-gray-500">Maks. 2MB. Format: JPG, PNG.</p>
+                                    <p class="mt-1 text-[11px] text-gray-500">Maks. 2MB. Format: JPG, PNG, WEBP.</p>
                                 </div>
-                                <div x-show="imagePreview" style="display: none;" class="flex-shrink-0">
+                                <div x-show="imagePreview" style="display: none;" class="shrink-0">
                                     <img :src="imagePreview" class="h-16 w-20 object-cover rounded-lg border border-gray-200 shadow-sm">
                                 </div>
                             </div>
@@ -227,27 +409,32 @@
 
                     <div class="mt-8 pt-4 border-t border-gray-100 flex justify-end space-x-3">
                         <button type="button" @click="showAddModal = false" class="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
-                        <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-bold flex items-center hover:bg-indigo-700 focus:ring-4 focus:ring-indigo-200 transition shadow-sm">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Simpan Data
+                        <button type="submit" class="px-6 py-2.5 bg-blue-600 text-white rounded-lg text-sm font-bold flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-200 transition shadow-sm">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg> Simpan Part
                         </button>
                     </div>
                 </form>
             </div>
         </div>
 
+        <!-- ======================================================== -->
+        <!-- MODAL 2: EDIT PART                                       -->
+        <!-- ======================================================== -->
         <div x-show="showEditModal" 
              class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" 
              style="display: none;"
-             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
              x-cloak>
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden transform transition-all flex flex-col max-h-full" 
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]" 
                  @click.away="showEditModal = false"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+                 x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" 
+                 x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
                 
-                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
-                    <h3 class="text-gray-800 font-bold text-lg flex items-center">
+                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-gray-900 font-bold text-lg flex items-center">
                         <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Edit Data Parts
+                        Edit Data Master Part
                     </h3>
                     <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -258,44 +445,48 @@
                     @csrf @method('PUT')
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Code</label>
-                            <input type="text" name="part_code" x-model="formData.code" required class="w-full border-gray-300 bg-gray-100 rounded-lg text-sm py-2 px-3 text-gray-500 cursor-not-allowed shadow-sm" readonly>
-                            <p class="text-[10px] text-gray-400 mt-1">Item Code terkunci.</p>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Item No. / Part Code <span class="text-red-500">*</span></label>
+                            <input type="text" name="part_code" x-model="formData.code" required class="w-full font-mono border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Name <span class="text-red-500">*</span></label>
-                            <input type="text" name="name" x-model="formData.name" required class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
-                        </div>
-                        
-                        <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Description</label>
-                            <input type="text" name="description" x-model="formData.desc" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Nama Part / Description <span class="text-red-500">*</span></label>
+                            <input type="text" name="name" x-model="formData.name" required class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         
                         <div class="sm:col-span-1">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Max Shoot <span class="text-red-500">*</span></label>
-                            <input type="number" name="max_shoot" x-model="formData.max_shoot" required class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Kuantitas Stok (Cumulative Qty) <span class="text-red-500">*</span></label>
+                            <input type="number" name="current_stock" x-model="formData.stock" required min="0" class="w-full tabular-nums border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
+                        </div>
+
+                        <div class="sm:col-span-1">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Max Shoot <span class="text-red-500">*</span></label>
+                            <input type="number" name="max_shoot" x-model="formData.max_shoot" required min="0" class="w-full tabular-nums border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
+                        </div>
+
+                        <div class="sm:col-span-2">
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Deskripsi Lengkap</label>
+                            <input type="text" name="description" x-model="formData.desc" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition">
                         </div>
                         
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Item Notes (Opsional)</label>
-                            <textarea name="item_notes" x-model="formData.notes" rows="2" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-indigo-500 focus:border-indigo-500 shadow-sm transition"></textarea>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Item Notes / Keterangan</label>
+                            <textarea name="item_notes" x-model="formData.notes" rows="2" class="w-full border-gray-300 rounded-lg text-sm py-2 px-3 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition"></textarea>
                         </div>
                         
                         <div class="sm:col-span-2">
-                            <label class="block text-sm font-semibold text-gray-700 mb-1.5">Update Foto Part</label>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-1.5">Update Foto Part</label>
                             <div class="flex items-start space-x-4">
                                 <div class="flex-1">
                                     <input type="file" name="image" id="fileUploadEdit" class="hidden" accept="image/*" @change="fileChosen">
                                     <div class="relative rounded-lg shadow-sm">
-                                        <input type="text" readonly placeholder="Pilih gambar baru..." class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm py-2 pl-3 pr-24 text-gray-500 focus:ring-0 cursor-not-allowed" :value="imagePreview ? 'Gambar siap diupload' : ''">
-                                        <button type="button" onclick="document.getElementById('fileUploadEdit').click()" class="absolute inset-y-0 right-0 px-4 text-sm font-medium text-white bg-indigo-500 rounded-r-lg hover:bg-indigo-600 focus:ring-4 focus:outline-none focus:ring-indigo-300">
-                                            Browse
+                                        <input type="text" readonly placeholder="Pilih foto baru..." class="w-full border-gray-300 bg-gray-50 rounded-lg text-sm py-2 pl-3 pr-24 text-gray-500 focus:ring-0 cursor-not-allowed" :value="imagePreview ? 'Foto baru siap diupload' : ''">
+                                        <button type="button" onclick="document.getElementById('fileUploadEdit').click()" class="absolute inset-y-0 right-0 px-4 text-sm font-medium text-white bg-slate-700 rounded-r-lg hover:bg-slate-800 focus:ring-4 focus:ring-slate-300">
+                                            Pilih File
                                         </button>
                                     </div>
-                                    <p class="mt-1 text-[11px] text-gray-500">Abaikan jika tidak ingin mengubah gambar.</p>
+                                    <p class="mt-1 text-[11px] text-gray-500">Abaikan jika tidak ingin mengganti foto part saat ini.</p>
                                 </div>
-                                <div x-show="imagePreview" style="display: none;" class="flex-shrink-0">
+                                <div x-show="imagePreview" style="display: none;" class="shrink-0">
                                     <img :src="imagePreview" class="h-16 w-20 object-cover rounded-lg border border-gray-200 shadow-sm">
                                 </div>
                             </div>
@@ -312,34 +503,92 @@
             </div>
         </div>
 
+        <!-- ======================================================== -->
+        <!-- MODAL 3: HAPUS PART                                      -->
+        <!-- ======================================================== -->
         <div x-show="showDeleteModal" 
              class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" 
              style="display: none;"
-             x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
              x-cloak>
-            <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm overflow-hidden transform transition-all" 
-                 @click.away="showDeleteModal = false"
-                 x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95" x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100" x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100" x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95">
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-sm overflow-hidden transform transition-all" 
+                 @click.away="showDeleteModal = false">
                 
                 <div class="p-6 text-center">
-                    <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-5">
-                        <svg class="text-red-600 w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <div class="mx-auto flex items-center justify-center w-14 h-14 rounded-full bg-red-100 mb-4">
+                        <svg class="text-red-600 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Hapus Part Katalog?</h3>
-                    <p class="mb-6 text-sm text-gray-500">Anda yakin ingin menghapus kode part <span class="font-bold text-gray-800" x-text="formData.code"></span>? Data yang dihapus tidak dapat dikembalikan.</p>
+                    <h3 class="text-lg font-bold text-gray-900 mb-1.5">Hapus Master Part?</h3>
+                    <p class="mb-5 text-sm text-gray-500">
+                        Anda yakin ingin menghapus part <span class="font-mono font-bold text-gray-900" x-text="formData.code"></span> (<span x-text="formData.name"></span>)? Data yang telah dihapus tidak dapat dipulihkan.
+                    </p>
                     
                     <div class="flex justify-center space-x-3">
-                        <button @click="showDeleteModal = false" class="text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium px-5 py-2.5 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
+                        <button type="button" @click="showDeleteModal = false" class="text-gray-700 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg text-sm font-medium px-4 py-2 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
                         <form :action="`/master-parts/${formData.id}`" method="POST" class="inline-flex">
                             @csrf @method('DELETE')
-                            <button type="submit" class="text-white bg-red-600 hover:bg-red-700 rounded-lg text-sm font-medium px-5 py-2.5 focus:ring-4 focus:ring-red-200 transition shadow-sm">
-                                Ya, Hapus Data
+                            <button type="submit" class="text-white bg-red-600 hover:bg-red-700 rounded-lg text-sm font-bold px-4 py-2 focus:ring-4 focus:ring-red-200 transition shadow-sm">
+                                Ya, Hapus
                             </button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
-        
+
+        <!-- ======================================================== -->
+        <!-- MODAL 4: UPLOAD EXCEL DATA                               -->
+        <!-- ======================================================== -->
+        <div x-show="showImportModal" 
+             class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4" 
+             style="display: none;"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
+             x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+             x-cloak>
+            <div class="bg-white rounded-xl shadow-xl w-full max-w-lg overflow-hidden transform transition-all" 
+                 @click.away="showImportModal = false">
+                
+                <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-gray-900 font-bold text-lg flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Upload & Import Berkas Excel
+                    </h3>
+                    <button @click="showImportModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+
+                <form action="{{ route('master-parts.import-excel') }}" method="POST" enctype="multipart/form-data" class="p-6">
+                    @csrf
+                    
+                    <div class="mb-4 bg-blue-50 border border-blue-200 rounded-lg p-3.5 text-xs text-blue-800">
+                        <div class="font-bold flex items-center mb-1 text-blue-900">
+                            <svg class="w-4 h-4 mr-1.5 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Format Berkas Yang Didukung
+                        </div>
+                        <p class="leading-relaxed">Sesuai format Excel <span class="font-semibold">Stock Spare Part (Master)</span>: Kolom 1 (No), Kolom 2 (Item No.), Kolom 3 (Description), Kolom 4 (Cumulative Qty).</p>
+                    </div>
+
+                    <div class="mb-5">
+                        <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">Pilih File Excel (.xlsx, .xls, .csv)</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-400 transition bg-gray-50/50">
+                            <svg class="mx-auto h-10 w-10 text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            <input type="file" name="excel_file" id="excel_file" required accept=".xlsx,.xls,.csv" class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <p class="text-[11px] text-gray-400 mt-2">Maksimal ukuran file: 20MB</p>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 pt-3 border-t border-gray-100">
+                        <button type="button" @click="showImportModal = false" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition shadow-sm">Batal</button>
+                        <button type="submit" class="px-5 py-2 bg-emerald-600 text-white rounded-lg text-sm font-bold flex items-center hover:bg-emerald-700 focus:ring-4 focus:ring-emerald-200 transition shadow-sm">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            Mulai Import
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
     </div>
 </x-app-layout>
