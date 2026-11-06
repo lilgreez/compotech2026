@@ -86,7 +86,7 @@
                 </div>
                 <div class="bg-white p-4 rounded-xl border border-gray-200 shadow-sm flex items-center justify-between">
                     <div>
-                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer / Ownership</p>
+                        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Ownership</p>
                         <p class="text-2xl font-bold text-indigo-600 mt-1">{{ number_format($stats['customers']) }}</p>
                     </div>
                     <div class="w-10 h-10 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
@@ -151,9 +151,9 @@
 
                             <!-- Filter Ownership -->
                             <div class="flex items-center space-x-2 max-w-xs">
-                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Customer:</span>
+                                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Ownership:</span>
                                 <select name="ownership" class="border-gray-300 rounded-lg py-1.5 px-3 text-xs focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm truncate" onchange="this.form.submit()">
-                                    <option value="">Semua Customer</option>
+                                    <option value="">Semua Ownership</option>
                                     @foreach($ownershipList as $own)
                                         <option value="{{ $own }}" {{ $ownership == $own ? 'selected' : '' }}>{{ $own }}</option>
                                     @endforeach
@@ -172,7 +172,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 py-2 pr-8 shadow-sm" placeholder="Cari Kode Mold, Nama, Customer, Dimensi...">
+                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 py-2 pr-8 shadow-sm" placeholder="Cari Kode Mold, Nama, Ownership, Dimensi...">
                             @if($search)
                                 <a href="{{ route('master-diesets.index', array_merge(request()->except('search'))) }}" class="absolute inset-y-0 right-0 flex items-center pr-2.5 text-gray-400 hover:text-gray-600">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -192,7 +192,7 @@
                                 <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Nama Mold (New)</th>
                                 <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Cavity</th>
                                 <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Status</th>
-                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Ownership / Customer</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Ownership</th>
                                 <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Type Cavity</th>
                                 <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-gray-200">Thn Mold</th>
                                 <th scope="col" class="px-4 py-3.5 font-bold text-left border-r border-gray-200">Dimensi Mold</th>
@@ -448,7 +448,7 @@
                                     </select>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership / Customer</label>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership</label>
                                     <input type="text" name="ownership" list="customer-list" placeholder="Contoh: Compotec International, PT" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
@@ -670,7 +670,7 @@
                                     </select>
                                 </div>
                                 <div class="sm:col-span-2">
-                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership / Customer</label>
+                                    <label class="block text-xs font-bold text-gray-700 mb-1">Ownership</label>
                                     <input type="text" name="ownership" x-model="editData.ownership" list="customer-list" placeholder="Contoh: Compotec International, PT" class="w-full border-gray-300 rounded-lg text-xs py-2 px-3 focus:ring-2 focus:ring-blue-500">
                                 </div>
                                 <div>
@@ -847,7 +847,7 @@
             </div>
         </div>
 
-        <!-- Datalist untuk Autocomplete Ownership / Customer -->
+        <!-- Datalist untuk Autocomplete Ownership -->
         <datalist id="customer-list">
             @foreach($ownershipList as $own)
                 <option value="{{ $own }}">
