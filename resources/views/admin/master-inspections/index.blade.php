@@ -38,10 +38,12 @@
                     </div>
                 </div>
                 
-                <button @click="showAddModal = true" class="w-full md:w-auto px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-colors focus:ring-4 focus:ring-indigo-100">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                    Tambah {{ $currentTabName }}
-                </button>
+                <div class="flex items-center gap-2.5 w-full sm:w-auto shrink-0 justify-start sm:justify-end">
+                    <button @click="showAddModal = true" class="h-9 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-all focus:ring-4 focus:ring-indigo-100 cursor-pointer whitespace-nowrap shrink-0">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
+                        <span>Tambah {{ $currentTabName }}</span>
+                    </button>
+                </div>
             </div>
         </div>
 

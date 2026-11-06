@@ -41,12 +41,12 @@
 
         <!-- Mission Control Page Header -->
         <div class="px-6 py-5 bg-white border-b border-slate-200">
-            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                <div class="flex items-center space-x-3.5">
-                    <div class="p-2.5 bg-slate-900 rounded-xl text-white shadow-sm ring-1 ring-slate-800">
+            <div class="max-w-7xl mx-auto flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+                <div class="flex items-center space-x-3.5 min-w-0">
+                    <div class="p-2.5 bg-slate-900 rounded-xl text-white shadow-xs ring-1 ring-slate-800 shrink-0">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                     </div>
-                    <div>
+                    <div class="min-w-0">
                         <div class="flex items-center gap-2.5 flex-wrap">
                             <h2 class="font-extrabold text-xl text-slate-900 tracking-tight leading-tight">Master Parts</h2>
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
@@ -54,30 +54,30 @@
                                     <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                                     <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                                 </span>
-                                Katalog Terintegrasi : {{ number_format($totalParts) }} Parts
+                                Katalog Terintegrasi : <span class="font-mono tabular-nums font-bold">{{ number_format($totalParts) }}</span> Parts
                             </span>
                         </div>
-                        <p class="text-xs text-slate-500 mt-1">Database master suku cadang mold, kontrol kuantitas stok gudang, dan parameter lifecycle max shoot</p>
+                        <p class="text-xs text-slate-500 mt-1 max-w-xl leading-relaxed">Database master suku cadang mold, kontrol kuantitas stok gudang, dan parameter lifecycle max shoot</p>
                     </div>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                    <button type="button" @click="showImportModal = true" class="w-full sm:w-auto px-3.5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-bold inline-flex items-center justify-center hover:bg-slate-50 focus:ring-4 focus:ring-slate-100 transition shadow-2xs">
-                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Upload Excel
+                <div class="flex items-center gap-2 sm:gap-2.5 w-full sm:w-auto justify-start sm:justify-end shrink-0 flex-nowrap overflow-x-auto pb-1 sm:pb-0">
+                    <button type="button" @click="showImportModal = true" class="h-9 px-3.5 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-2xs hover:border-slate-400 focus:ring-4 focus:ring-slate-100 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                        <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span>Upload Excel</span>
                     </button>
 
-                    <form action="{{ route('master-parts.sync') }}" method="POST" class="inline w-full sm:w-auto">
+                    <form action="{{ route('master-parts.sync') }}" method="POST" class="m-0 p-0 flex shrink-0">
                         @csrf
-                        <button type="submit" class="w-full sm:w-auto px-3.5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center focus:ring-4 focus:ring-amber-100 transition shadow-2xs">
-                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
-                            Sync from Wings
+                        <button type="submit" class="h-9 px-3.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-semibold inline-flex items-center justify-center gap-2 shadow-2xs focus:ring-4 focus:ring-amber-100 transition-all cursor-pointer whitespace-nowrap">
+                            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
+                            <span>Sync from Wings</span>
                         </button>
                     </form>
                     
-                    <button @click="imagePreview = null; formData = { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' }; showAddModal = true" class="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center focus:ring-4 focus:ring-blue-100 transition shadow-2xs">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                        Tambah Part
+                    <button @click="imagePreview = null; formData = { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' }; showAddModal = true" class="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs focus:ring-4 focus:ring-blue-100 transition-all cursor-pointer whitespace-nowrap shrink-0">
+                        <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
+                        <span>Tambah Part</span>
                     </button>
                 </div>
             </div>
