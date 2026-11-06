@@ -11,6 +11,7 @@ use App\Http\Controllers\DiesetStatusController;
 use App\Http\Controllers\PartsStockController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\EmailReportController;
+use App\Http\Controllers\RbacController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +67,14 @@ Route::middleware(['auth'])->group(function () {
         // --- Administrator Settings ---
         Route::resource('operators', OperatorController::class)->except(['create', 'show', 'edit']);
         Route::resource('email-reports', EmailReportController::class)->except(['create', 'show', 'edit']);
+
+        // --- RBAC (Role-Based Access Control) ---
+        Route::get('rbac', [RbacController::class, 'index'])->name('rbac.index');
+        Route::post('rbac/roles', [RbacController::class, 'storeRole'])->name('rbac.roles.store');
+        Route::put('rbac/roles/{id}', [RbacController::class, 'updateRole'])->name('rbac.roles.update');
+        Route::delete('rbac/roles/{id}', [RbacController::class, 'destroyRole'])->name('rbac.roles.destroy');
+        Route::put('rbac/users/{id}/roles', [RbacController::class, 'updateUserRole'])->name('rbac.users.update-role');
+        Route::post('rbac/matrix', [RbacController::class, 'syncMatrix'])->name('rbac.matrix.sync');
     });
 
     // =========================================================

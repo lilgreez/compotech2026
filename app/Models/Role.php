@@ -24,17 +24,37 @@ class Role extends Model
     }
 
     /**
+     * The permissions that belong to the role.
+     */
+    public function permissions(): BelongsToMany
+    {
+        return $this->belongsToMany(Permission::class)->withTimestamps();
+    }
+
+    /**
      * Check if the role has a specific permission.
      */
     public function hasPermission(string $permission): bool
     {
-        // For simplicity, we'll use role-based permissions
-        // In a more complex system, you might have a permissions table
+        // Admin superuser bypass: Admin has all permissions
+        if ($this->name === 'Admin') {
+            return true;
+        }
+
+        // Check if dynamic permissions exist for this role
+        if ($this->relationLoaded('permissions')) {
+            if ($this->permissions->contains('name', $permission)) {
+                return true;
+            }
+        } elseif ($this->permissions()->where('name', $permission)->exists()) {
+            return true;
+        }
+
+        // Fallback for legacy permission names
         return match($this->name) {
-            'Admin' => true, // Admin has all permissions
             'Supervisor' => in_array($permission, ['view', 'approve', 'export']),
-            'Maintenance' => in_array($permission, ['create', 'read', 'update', 'delete']), // CRUD for inspections
-            'Operator' => in_array($permission, ['create']), // Only create inspections
+            'Maintenance' => in_array($permission, ['create', 'read', 'update', 'delete']),
+            'Operator' => in_array($permission, ['create']),
             default => false,
         };
     }

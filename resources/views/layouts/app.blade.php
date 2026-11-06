@@ -24,6 +24,7 @@
                     request()->routeIs('audit-logs.show') => 'Detail Audit Log',
                     request()->routeIs('audit-logs.*') => 'Audit Logs',
                     request()->routeIs('email-reports.*') => 'Email Report',
+                    request()->routeIs('rbac.*') => 'Role & Permission (RBAC)',
                     request()->routeIs('profile.*') => 'Profile',
                     request()->routeIs('inspections.*') => 'Inspections',
                     default => null,

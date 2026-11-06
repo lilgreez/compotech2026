@@ -11,9 +11,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // ANDREW FIX: Memanggil RoleSeeder milik Anda agar dieksekusi!
         $this->call([
             RoleSeeder::class,
+            RbacPermissionSeeder::class,
         ]);
     }
 }
