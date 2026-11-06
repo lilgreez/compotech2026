@@ -9,12 +9,12 @@ use Illuminate\Database\Seeder;
 class RbacPermissionSeeder extends Seeder
 {
     /**
-     * Run the database seeds.
+     * Run the database seeds according to BRD IFU V.01 Matrix.
      */
     public function run(): void
     {
         $permissions = [
-            // Dashboard
+            // Modul 2: Dashboard
             [
                 'name' => 'dashboard.view',
                 'display_name' => 'Lihat Dashboard',
@@ -22,7 +22,7 @@ class RbacPermissionSeeder extends Seeder
                 'description' => 'Akses dan melihat statistik ringkasan pada dashboard utama',
             ],
 
-            // Mold & Status
+            // Modul 3: Mold & Status
             [
                 'name' => 'mold_status.view',
                 'display_name' => 'Lihat Status Mold',
@@ -33,10 +33,10 @@ class RbacPermissionSeeder extends Seeder
                 'name' => 'mold_status.export',
                 'display_name' => 'Export Status Mold',
                 'module' => 'Mold & Diecast',
-                'description' => 'Mengekspor data status mold ke format PDF/Excel',
+                'description' => 'Mengekspor data status mold ke format Excel',
             ],
 
-            // Inspection Monitoring
+            // Modul 4: Inspection Monitoring
             [
                 'name' => 'inspection.view',
                 'display_name' => 'Lihat Monitoring Inspeksi',
@@ -59,16 +59,16 @@ class RbacPermissionSeeder extends Seeder
                 'name' => 'inspection.approve',
                 'display_name' => 'Approval Laporan Inspeksi',
                 'module' => 'Inspection Monitoring',
-                'description' => 'Menyetujui dan memvalidasi laporan inspeksi dari operator/maintenance',
+                'description' => 'Menyetujui dan memvalidasi laporan inspeksi',
             ],
             [
                 'name' => 'inspection.export',
                 'display_name' => 'Export Laporan Inspeksi',
                 'module' => 'Inspection Monitoring',
-                'description' => 'Mengekspor data inspeksi ke Excel/PDF',
+                'description' => 'Mengekspor data inspeksi ke Excel',
             ],
 
-            // Parts Stock
+            // Modul 5: Parts Stock
             [
                 'name' => 'parts_stock.view',
                 'display_name' => 'Lihat Stok Parts',
@@ -88,7 +88,7 @@ class RbacPermissionSeeder extends Seeder
                 'description' => 'Mengirim pemberitahuan stok kritis via email ke Supervisor',
             ],
 
-            // Master Data
+            // Modul 6: Master Data
             [
                 'name' => 'master_molds.view',
                 'display_name' => 'Lihat Master Mold',
@@ -114,7 +114,7 @@ class RbacPermissionSeeder extends Seeder
                 'description' => 'Mengatur kamus item standar pemeriksaan cetakan mold',
             ],
 
-            // Administrator & Security
+            // Modul 7 & 8: Administrator Settings & Security
             [
                 'name' => 'operators.manage',
                 'display_name' => 'Kelola Akun Operator',
@@ -139,10 +139,56 @@ class RbacPermissionSeeder extends Seeder
                 'module' => 'Administrator',
                 'description' => 'Manajemen hak akses peran, permission matrix, dan user assignment',
             ],
+
+            // Modul 9: Permintaan Mold Baru (SPK & Progress Tracking)
+            [
+                'name' => 'spk.view',
+                'display_name' => 'Lihat SPK & Progress Mold',
+                'module' => 'SPK Mold Baru',
+                'description' => 'Melihat daftar SPK pembuatan mold baru dan progress pengerjaan',
+            ],
+            [
+                'name' => 'spk.create',
+                'display_name' => 'Terbitkan SPK Mold Baru',
+                'module' => 'SPK Mold Baru',
+                'description' => 'Membuat SPK pengerjaan mold baru',
+            ],
+            [
+                'name' => 'spk.manage',
+                'display_name' => 'Kelola Tahapan & Material SPK',
+                'module' => 'SPK Mold Baru',
+                'description' => 'Memperbarui status tahapan pengerjaan dan checklist part/material SPK',
+            ],
+
+            // Modul 10: Tiket Perbaikan Mold (Repair Ticketing)
+            [
+                'name' => 'repair_ticket.view',
+                'display_name' => 'Lihat Tiket Perbaikan',
+                'module' => 'Tiket Perbaikan',
+                'description' => 'Melihat daftar tiket perbaikan mold dan status pengerjaan',
+            ],
+            [
+                'name' => 'repair_ticket.create',
+                'display_name' => 'Ajukan Tiket Perbaikan',
+                'module' => 'Tiket Perbaikan',
+                'description' => 'Mengajukan tiket komplain kerusakan mold/part disertai bukti foto',
+            ],
+            [
+                'name' => 'repair_ticket.assign',
+                'display_name' => 'Penugasan Teknisi Tiket',
+                'module' => 'Tiket Perbaikan',
+                'description' => 'Menugaskan teknisi maintenance penanggung jawab perbaikan',
+            ],
+            [
+                'name' => 'repair_ticket.update_progress',
+                'display_name' => 'Update Progress Perbaikan',
+                'module' => 'Tiket Perbaikan',
+                'description' => 'Memperbarui status, persentase progress, dan catatan teknisi perbaikan',
+            ],
         ];
 
         foreach ($permissions as $perm) {
-            Permission::firstOrCreate(
+            Permission::updateOrCreate(
                 ['name' => $perm['name']],
                 [
                     'display_name' => $perm['display_name'],
@@ -152,10 +198,56 @@ class RbacPermissionSeeder extends Seeder
             );
         }
 
-        // Attach all permissions to Admin
+        // Attach permissions to roles according to BRD matrix
         $admin = Role::where('name', 'Admin')->first();
         if ($admin) {
             $admin->permissions()->sync(Permission::all());
+        }
+
+        $spv = Role::where('name', 'Supervisor')->first();
+        if ($spv) {
+            $spvPerms = Permission::whereIn('name', [
+                'dashboard.view',
+                'mold_status.view', 'mold_status.export',
+                'inspection.view', 'inspection.create', 'inspection.update', 'inspection.approve', 'inspection.export',
+                'parts_stock.view', 'parts_stock.manage', 'parts_stock.notify',
+                'spk.view', 'spk.create', 'spk.manage',
+                'repair_ticket.view', 'repair_ticket.create', 'repair_ticket.assign', 'repair_ticket.update_progress',
+            ])->get();
+            $spv->permissions()->sync($spvPerms);
+        }
+
+        $mnt = Role::where('name', 'Maintenance')->first();
+        if ($mnt) {
+            $mntPerms = Permission::whereIn('name', [
+                'dashboard.view',
+                'mold_status.view',
+                'inspection.view', 'inspection.create', 'inspection.update',
+                'spk.view', 'spk.manage',
+                'repair_ticket.view', 'repair_ticket.create', 'repair_ticket.update_progress',
+            ])->get();
+            $mnt->permissions()->sync($mntPerms);
+        }
+
+        $opr = Role::where('name', 'Operator')->first();
+        if ($opr) {
+            $oprPerms = Permission::whereIn('name', [
+                'dashboard.view',
+                'mold_status.view',
+                'inspection.view', 'inspection.create',
+                'repair_ticket.view', 'repair_ticket.create',
+            ])->get();
+            $opr->permissions()->sync($oprPerms);
+        }
+
+        $ppc = Role::where('name', 'PPIC')->first();
+        if ($ppc) {
+            $ppcPerms = Permission::whereIn('name', [
+                'dashboard.view',
+                'mold_status.view', 'mold_status.export',
+                'spk.view',
+            ])->get();
+            $ppc->permissions()->sync($ppcPerms);
         }
     }
 }

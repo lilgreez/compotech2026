@@ -24,6 +24,8 @@
                     request()->routeIs('audit-logs.show') => 'Detail Audit Log',
                     request()->routeIs('audit-logs.*') => 'Audit Logs',
                     request()->routeIs('email-reports.*') => 'Email Report',
+                    request()->routeIs('mold-requests.*') => 'SPK Mold Baru',
+                    request()->routeIs('repair-tickets.*') => 'Tiket Perbaikan Mold',
                     request()->routeIs('rbac.*') => 'Role & Permission (RBAC)',
                     request()->routeIs('profile.*') => 'Profile',
                     request()->routeIs('inspections.*') => 'Inspections',

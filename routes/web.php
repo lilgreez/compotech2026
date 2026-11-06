@@ -12,6 +12,8 @@ use App\Http\Controllers\PartsStockController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\EmailReportController;
 use App\Http\Controllers\RbacController;
+use App\Http\Controllers\MoldRequestController;
+use App\Http\Controllers\RepairTicketController;
 use App\Http\Middleware\RoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -22,18 +24,15 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     
     // =========================================================
-    // DASHBOARD & PROFILE ROUTES
+    // MODUL 1 & 2: DASHBOARD & PROFILE ROUTES (Semua Role)
     // =========================================================
-    // ANDREW FIX: Mengarahkan dashboard ke DashboardController yang baru kita buat
-    Route::get('/dashboard',[DashboardController::class, 'index'])->name('dashboard');
-
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // =========================================================
-    // MOLD STATUS ROUTES (Sesuai PDF Hal 9-11)
-    // Akses terbuka untuk semua role yang sudah login
+    // MODUL 3: MOLD STATUS (MONITORING STOK) (Semua Role)
     // =========================================================
     Route::get('/mold-status', [DiesetStatusController::class, 'index'])->name('dieset-status.index');
     Route::get('/mold-status/export', [DiesetStatusController::class, 'export'])->name('dieset-status.export');
@@ -45,7 +44,61 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/dieset-status/{id}', fn($id) => redirect()->route('dieset-status.show', $id));
 
     // =========================================================
-    // ADMINISTRATOR ROUTES (Master Data, Operator, Email, Logs)
+    // MODUL 4: INSPECTION MONITOR (ADM, SPV, MNT, OPR)
+    // =========================================================
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor,Maintenance,Operator'])->group(function () {
+        Route::get('monitoring', [InspectionController::class, 'monitoring'])->name('monitoring');
+        Route::get('monitoring/{id}', [InspectionController::class, 'showMonitoring'])->name('monitoring.show');
+        Route::get('export', [InspectionController::class, 'export'])->name('export');
+        Route::resource('inspections', InspectionController::class);
+    });
+
+    // =========================================================
+    // MODUL 5: PARTS STOCK & EMAIL NOTIFIKASI (ADM, SPV)
+    // =========================================================
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor'])->group(function () {
+        Route::get('/parts-stock', [PartsStockController::class, 'index'])->name('parts-stock.index');
+        Route::post('/parts-stock/mail-spv', [PartsStockController::class, 'mailToSpv'])->name('parts-stock.mail');
+    });
+
+    // =========================================================
+    // MODUL 9: PERMINTAAN MOLD BARU (SPK & PROGRESS TRACKING)
+    // Akses: ADM, SPV, MNT, PPC
+    // =========================================================
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor,Maintenance,PPIC'])->group(function () {
+        Route::get('mold-requests', [MoldRequestController::class, 'index'])->name('mold-requests.index');
+        Route::get('mold-requests/{id}', [MoldRequestController::class, 'show'])->name('mold-requests.show');
+    });
+
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor'])->group(function () {
+        Route::post('mold-requests', [MoldRequestController::class, 'store'])->name('mold-requests.store');
+        Route::delete('mold-requests/{id}', [MoldRequestController::class, 'destroy'])->name('mold-requests.destroy');
+    });
+
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor,Maintenance'])->group(function () {
+        Route::put('mold-requests/{id}/stages/{stageId}', [MoldRequestController::class, 'updateStage'])->name('mold-requests.stages.update');
+        Route::post('mold-requests/{id}/materials', [MoldRequestController::class, 'storeMaterial'])->name('mold-requests.materials.store');
+        Route::delete('mold-requests/{id}/materials/{materialId}', [MoldRequestController::class, 'destroyMaterial'])->name('mold-requests.materials.destroy');
+    });
+
+    // =========================================================
+    // MODUL 10: TIKET PERBAIKAN MOLD (REPAIR TICKETING)
+    // Akses: ADM, SPV, MNT, OPR
+    // =========================================================
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor,Maintenance,Operator'])->group(function () {
+        Route::get('repair-tickets', [RepairTicketController::class, 'index'])->name('repair-tickets.index');
+        Route::post('repair-tickets', [RepairTicketController::class, 'store'])->name('repair-tickets.store');
+        Route::get('repair-tickets/{id}', [RepairTicketController::class, 'show'])->name('repair-tickets.show');
+    });
+
+    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor,Maintenance'])->group(function () {
+        Route::post('repair-tickets/{id}/assign', [RepairTicketController::class, 'assignTechnician'])->name('repair-tickets.assign');
+        Route::post('repair-tickets/{id}/progress', [RepairTicketController::class, 'updateProgress'])->name('repair-tickets.update-progress');
+        Route::delete('repair-tickets/{id}', [RepairTicketController::class, 'destroy'])->name('repair-tickets.destroy');
+    });
+
+    // =========================================================
+    // MODUL 6, 7, 8: ADMINISTRATOR & MASTER DATA (Khusus Admin)
     // =========================================================
     Route::middleware([RoleMiddleware::class . ':Admin'])->group(function () {
         
@@ -78,39 +131,6 @@ Route::middleware(['auth'])->group(function () {
         Route::post('rbac/matrix', [RbacController::class, 'syncMatrix'])->name('rbac.matrix.sync');
     });
 
-    // =========================================================
-    // SUPERVISOR & ADMIN ROUTES (Monitoring, Export, Parts Stock)
-    // =========================================================
-    Route::middleware([RoleMiddleware::class . ':Admin,Supervisor'])->group(function () {
-        // PDF Hal 12-14: Monitoring & Export
-        Route::get('monitoring', [InspectionController::class, 'monitoring'])->name('monitoring');
-        Route::get('monitoring/{id}', [InspectionController::class, 'showMonitoring'])->name('monitoring.show');
-        Route::get('export', [InspectionController::class, 'export'])->name('export');
-        
-        // PDF Hal 15-17: Parts Stock & Mail to SPV
-        Route::get('/parts-stock', [PartsStockController::class, 'index'])->name('parts-stock.index');
-        Route::post('/parts-stock/mail-spv',[PartsStockController::class, 'mailToSpv'])->name('parts-stock.mail');
-    });
-
-    // =========================================================
-    // MAINTENANCE ROUTES (CRUD Inspeksi - Update/Delete)
-    // =========================================================
-    Route::middleware([RoleMiddleware::class . ':Admin,Maintenance'])->group(function () {
-        Route::resource('inspections', InspectionController::class)->except(['index', 'show', 'create', 'store']);
-    });
-
-    // =========================================================
-    // OPERATOR ROUTES (Hanya Input Inspeksi)
-    // =========================================================
-    Route::middleware([RoleMiddleware::class . ':Admin,Operator,Maintenance'])->group(function () {
-        Route::resource('inspections', InspectionController::class)->only(['create', 'store']);
-    });
-
-    // =========================================================
-    // COMMON ROUTES (View Inspeksi - Bisa diakses semua role yang berhak)
-    // =========================================================
-    Route::get('inspections', [InspectionController::class, 'index'])->name('inspections.index');
-    Route::get('inspections/{inspection}', [InspectionController::class, 'show'])->name('inspections.show');
 });
 
 require __DIR__.'/auth.php';
