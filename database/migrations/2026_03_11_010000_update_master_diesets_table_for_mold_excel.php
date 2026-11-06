@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -11,20 +12,16 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // Try dropping unique indices safely if they exist
+        try {
+            DB::statement("ALTER TABLE master_diesets DROP INDEX master_diesets_name_unique");
+        } catch (\Throwable $e) {}
+
+        try {
+            DB::statement("ALTER TABLE master_diesets DROP INDEX master_diesets_product_code_unique");
+        } catch (\Throwable $e) {}
+
         Schema::table('master_diesets', function (Blueprint $table) {
-            // Drop unique constraints if they exist
-            $sm = Schema::getConnection()->getDoctrineSchemaManager();
-            
-            // Drop unique indices
-            try {
-                $table->dropUnique('master_diesets_name_unique');
-            } catch (\Exception $e) {}
-
-            try {
-                $table->dropUnique('master_diesets_product_code_unique');
-            } catch (\Exception $e) {}
-
-            // Add new columns matching Excel schema
             if (!Schema::hasColumn('master_diesets', 'kode_mold')) {
                 $table->string('kode_mold', 100)->nullable()->index()->after('id');
             }
@@ -81,9 +78,10 @@ return new class extends Migration
             }
         });
 
-        // Modify existing columns if needed (production_year to string, status to string)
-        \DB::statement("ALTER TABLE master_diesets MODIFY COLUMN production_year VARCHAR(50) NULL");
-        \DB::statement("ALTER TABLE master_diesets MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Active'");
+        try {
+            DB::statement("ALTER TABLE master_diesets MODIFY COLUMN production_year VARCHAR(50) NULL");
+            DB::statement("ALTER TABLE master_diesets MODIFY COLUMN status VARCHAR(50) NOT NULL DEFAULT 'Active'");
+        } catch (\Throwable $e) {}
     }
 
     /**
