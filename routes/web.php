@@ -58,7 +58,9 @@ Route::middleware(['auth'])->group(function () {
     // =========================================================
     Route::middleware([RoleMiddleware::class . ':Admin,Supervisor'])->group(function () {
         Route::get('/parts-stock', [PartsStockController::class, 'index'])->name('parts-stock.index');
+        Route::get('/parts-stock/export', [PartsStockController::class, 'exportExcel'])->name('parts-stock.export');
         Route::post('/parts-stock/mail-spv', [PartsStockController::class, 'mailToSpv'])->name('parts-stock.mail');
+        Route::post('/parts-stock/{id}/adjust', [PartsStockController::class, 'adjustStock'])->name('parts-stock.adjust');
     });
 
     // =========================================================
