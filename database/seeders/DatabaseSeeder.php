@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             MasterPartSeeder::class,
             MoldComponentSeeder::class,
             InspectionHistorySeeder::class,
+            RepairTicketSeeder::class,
         ]);
     }
 }

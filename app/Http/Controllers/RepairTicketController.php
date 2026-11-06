@@ -20,14 +20,20 @@ class RepairTicketController extends Controller
         $search = $request->input('search');
         $statusFilter = $request->input('status', 'all');
         $priorityFilter = $request->input('priority', 'all');
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         $baseQuery = RepairTicket::query();
 
         // KPI Metrics
         $totalTickets = (clone $baseQuery)->count();
         $openTickets = (clone $baseQuery)->where('status', 'Open')->count();
-        $inProgressTickets = (clone $baseQuery)->whereIn('status', ['In Progress', 'Pending Part'])->count();
+        $inProgressTickets = (clone $baseQuery)->where('status', 'In Progress')->count();
+        $pendingPartTickets = (clone $baseQuery)->where('status', 'Pending Part')->count();
         $resolvedTickets = (clone $baseQuery)->whereIn('status', ['Resolved', 'Closed'])->count();
+        $urgentTickets = (clone $baseQuery)->where('priority', 'Urgent')->whereNotIn('status', ['Resolved', 'Closed'])->count();
 
         $query = RepairTicket::with(['dieset', 'part', 'reporter', 'technician']);
 
@@ -35,33 +41,49 @@ class RepairTicketController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('ticket_number', 'like', "%{$search}%")
                   ->orWhere('issue_description', 'like', "%{$search}%")
+                  ->orWhere('technician_notes', 'like', "%{$search}%")
                   ->orWhereHas('dieset', function ($sub) use ($search) {
+                      $sub->where('name', 'like', "%{$search}%")
+                          ->orWhere('kode_mold', 'like', "%{$search}%")
+                          ->orWhere('ownership', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('technician', function ($sub) use ($search) {
+                      $sub->where('name', 'like', "%{$search}%");
+                  })
+                  ->orWhereHas('reporter', function ($sub) use ($search) {
                       $sub->where('name', 'like', "%{$search}%");
                   });
             });
         }
 
         if ($statusFilter !== 'all') {
-            $query->where('status', $statusFilter);
+            if ($statusFilter === 'Resolved') {
+                $query->whereIn('status', ['Resolved', 'Closed']);
+            } else {
+                $query->where('status', $statusFilter);
+            }
         }
 
         if ($priorityFilter !== 'all') {
             $query->where('priority', $priorityFilter);
         }
 
-        $tickets = $query->orderBy('id', 'desc')->paginate(10);
-        $molds = MasterDieset::orderBy('name', 'asc')->get(['id', 'name']);
-        $technicians = User::orderBy('name', 'asc')->get(['id', 'name']);
+        $tickets = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
+        $molds = MasterDieset::orderBy('kode_mold', 'asc')->get(['id', 'kode_mold', 'name', 'ownership', 'cavity']);
+        $technicians = User::orderBy('name', 'asc')->get(['id', 'name', 'email']);
 
         return view('repair-tickets.index', compact(
             'tickets',
             'search',
             'statusFilter',
             'priorityFilter',
+            'perPage',
             'totalTickets',
             'openTickets',
             'inProgressTickets',
+            'pendingPartTickets',
             'resolvedTickets',
+            'urgentTickets',
             'molds',
             'technicians'
         ));
