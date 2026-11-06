@@ -1,0 +1,2 @@
+ALTER USER 'compotech'@'localhost' IDENTIFIED BY 'CompoTech2026X';
+FLUSH PRIVILEGES;

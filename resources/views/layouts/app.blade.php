@@ -5,7 +5,35 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Compotec2026 DAS') }}</title>
+        @php
+            $pageTitle = $title ?? null;
+            if (!$pageTitle) {
+                $pageTitle = match(true) {
+                    request()->routeIs('dashboard') => 'Dashboard',
+                    request()->routeIs('dieset-status.show') => 'Detail Dieset Status',
+                    request()->routeIs('dieset-status.*') => 'Dieset Status',
+                    request()->routeIs('monitoring.show') => 'Detail Inspection Monitor',
+                    request()->routeIs('monitoring*') => 'Inspection Monitor',
+                    request()->routeIs('export') => 'Export Inspection Monitor',
+                    request()->routeIs('parts-stock.*') => 'Parts Stock',
+                    request()->routeIs('master-diesets.show') => 'Detail Master Dieset',
+                    request()->routeIs('master-diesets.*') => 'Master Dieset',
+                    request()->routeIs('master-parts.*') => 'Master Parts',
+                    request()->routeIs('master-inspections.*') => 'Master Inspection',
+                    request()->routeIs('operators.*') => 'Operator',
+                    request()->routeIs('audit-logs.show') => 'Detail Audit Log',
+                    request()->routeIs('audit-logs.*') => 'Audit Logs',
+                    request()->routeIs('email-reports.*') => 'Email Report',
+                    request()->routeIs('profile.*') => 'Profile',
+                    request()->routeIs('inspections.*') => 'Inspections',
+                    default => null,
+                };
+            }
+            $fullTitle = $pageTitle 
+                ? (\Illuminate\Support\Str::startsWith($pageTitle, 'DAS - ') ? $pageTitle : 'DAS - ' . $pageTitle)
+                : 'DAS - Diecast Application System';
+        @endphp
+        <title>{{ $fullTitle }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

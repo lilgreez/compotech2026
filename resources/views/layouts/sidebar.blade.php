@@ -2,13 +2,12 @@
        class="fixed inset-y-0 left-0 z-30 flex flex-col transition-all duration-300 transform bg-[#2a3042] text-gray-300 lg:static lg:inset-0 shadow-xl overflow-y-auto scrollbar-hide shrink-0">
     
     <!-- Sidebar Header / Logo -->
-    <div class="flex items-center justify-between px-6 h-16 bg-[#262b3c] border-b border-gray-700/50 shrink-0">
-        <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
-                D
-            </div>
-            <span class="text-xl font-bold text-white tracking-wider" x-show="sidebarOpen">DieCast</span>
-        </div>
+    <div class="flex items-center px-6 h-16 bg-[#262b3c] border-b border-gray-700/50 shrink-0">
+        <a href="{{ route('dashboard') }}" class="flex items-center focus:outline-none group" x-show="sidebarOpen">
+            <span class="text-sm font-bold text-white tracking-wide leading-tight group-hover:text-blue-400 transition-colors">
+                Diecast Application System
+            </span>
+        </a>
     </div>
 
     <!-- Sidebar Navigation -->

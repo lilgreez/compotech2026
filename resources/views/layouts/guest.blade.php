@@ -5,7 +5,22 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        @php
+            $pageTitle = $title ?? null;
+            if (!$pageTitle) {
+                $pageTitle = match(true) {
+                    request()->routeIs('login') => 'Login',
+                    request()->routeIs('register') => 'Register',
+                    request()->routeIs('password.request') => 'Forgot Password',
+                    request()->routeIs('password.reset') => 'Reset Password',
+                    default => null,
+                };
+            }
+            $fullTitle = $pageTitle 
+                ? (\Illuminate\Support\Str::startsWith($pageTitle, 'DAS - ') ? $pageTitle : 'DAS - ' . $pageTitle)
+                : 'DAS - Diecast Application System';
+        @endphp
+        <title>{{ $fullTitle }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">

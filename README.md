@@ -10,6 +10,7 @@ Proyek ini dirancang dengan arsitektur **Clean Code, Performa Tinggi (Anti N+1 Q
 
 *   **Framework:** Laravel 12.x (PHP 8.2+)
 *   **Frontend:** TailwindCSS, Alpine.js, Blade Components (Tanpa jQuery)
+*   **UI/UX Quality Standards:** [Anti-Slop](https://github.com/miqdadbadjuber/anti-slop) Quality Filter & [DESIGN.md](DESIGN.md) (Anti Generic AI Design)
 *   **Database:** MySQL (Direkomendasikan menggunakan DBngin + DBeaver untuk Local Development)
 *   **Excel Export:** Maatwebsite / Laravel Excel
 *   **Authentication:** Laravel Breeze

@@ -1,0 +1,4 @@
+CREATE DATABASE IF NOT EXISTS compotech2026;
+CREATE USER IF NOT EXISTS 'compotech'@'localhost' IDENTIFIED BY 'CompoTech#2026';
+GRANT ALL PRIVILEGES ON compotech2026.* TO 'compotech'@'localhost';
+FLUSH PRIVILEGES;
