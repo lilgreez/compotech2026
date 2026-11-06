@@ -18,12 +18,24 @@ class RbacController extends Controller
     public function index(Request $request): View
     {
         $search = $request->input('search');
+        $tab = $request->input('tab', 'all');
         $perPage = (int) $request->input('per_page', 10);
         if (!in_array($perPage, [10, 25, 50, 100])) {
             $perPage = 10;
         }
 
+        // Global KPI Metrics
+        $totalRoles = Role::count();
+        $totalPermissions = Permission::count();
+        $totalUsers = User::count();
+
         $query = Role::withCount('users')->with('permissions');
+
+        if ($tab === 'system') {
+            $query->where('name', 'Admin');
+        } elseif ($tab === 'operational') {
+            $query->where('name', '!=', 'Admin');
+        }
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -43,7 +55,11 @@ class RbacController extends Controller
             'permissions',
             'groupedPermissions',
             'search',
-            'perPage'
+            'tab',
+            'perPage',
+            'totalRoles',
+            'totalPermissions',
+            'totalUsers'
         ));
     }
 
