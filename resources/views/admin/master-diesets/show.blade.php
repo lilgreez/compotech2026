@@ -64,7 +64,7 @@
                 </div>
                 <div>
                     <h2 class="font-bold text-xl text-gray-800 leading-tight">Detail Item Parts</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Kelola konfigurasi komponen untuk dieset ini</p>
+                    <p class="text-sm text-gray-500 mt-0.5">Kelola konfigurasi komponen untuk mold ini</p>
                 </div>
             </div>
             
@@ -95,7 +95,7 @@
                     </div>
                     <div class="text-right">
                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            Active Dieset
+                            Active Mold
                         </span>
                         <p class="text-xs text-gray-500 mt-1">Total Shoot: {{ number_format($dieset->total_shoot) }}</p>
                     </div>
@@ -177,7 +177,7 @@
                                             <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3">
                                                 <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                                             </div>
-                                            <p class="text-gray-500 font-medium text-base">Belum ada Parts di Dieset ini.</p>
+                                            <p class="text-gray-500 font-medium text-base">Belum ada Parts di Mold ini.</p>
                                             <p class="text-gray-400 text-sm mt-1">Silakan klik tombol "Add Category Part" di atas.</p>
                                         </div>
                                     </td>

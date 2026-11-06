@@ -1,11 +1,11 @@
 <table>
     <thead>
         <tr>
-            <th colspan="9" style="text-align: center; font-size: 14px; font-weight: bold;">Stock Dieset Parts</th>
+            <th colspan="9" style="text-align: center; font-size: 14px; font-weight: bold;">Stock Mold Parts</th>
         </tr>
         <tr></tr>
         <tr>
-            <th>Dieset</th>
+            <th>Mold</th>
             <th>Kategori</th>
             <th>Cavity</th>
             <th>Kode Parts</th>

@@ -45,6 +45,6 @@ class DiesetStatusController extends Controller
     public function export()
     {
         // Fitur Export persis Halaman 11 PDF
-        return Excel::download(new DiesetStatusExport, 'Stock_Dieset_Parts_'.date('Ymd_His').'.xlsx');
+        return Excel::download(new DiesetStatusExport, 'Stock_Mold_Parts_'.date('Ymd_His').'.xlsx');
     }
 }

@@ -13,14 +13,14 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
                 </div>
                 <div>
-                    <h2 class="font-bold text-xl text-gray-800 leading-tight">Master DieSet</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Kelola data master dieset dan informasi produk</p>
+                    <h2 class="font-bold text-xl text-gray-800 leading-tight">Master Mold</h2>
+                    <p class="text-sm text-gray-500 mt-0.5">Kelola data master mold dan informasi produk</p>
                 </div>
             </div>
             
             <button @click="showAddModal = true" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                Add New Dieset
+                Add New Mold
             </button>
         </div>
 
@@ -68,7 +68,7 @@
                             <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-2 pr-3 shadow-sm" placeholder="Cari Dieset..." onchange="this.form.submit()">
+                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 py-2 pr-3 shadow-sm" placeholder="Cari Mold..." onchange="this.form.submit()">
                         </div>
                     </form>
                 </div>
@@ -78,7 +78,7 @@
                         <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                             <tr>
                                 <th scope="col" class="px-6 py-4 font-semibold text-center w-12 border-r border-gray-200">No.</th>
-                                <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Dieset Name</th>
+                                <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Mold Name</th>
                                 <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Product Code</th>
                                 <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Product Name</th>
                                 <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Actual Shoot (Pcs)</th>
@@ -124,8 +124,8 @@
                                     <td colspan="7" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center justify-center">
                                             <svg class="w-12 h-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
-                                            <p class="text-gray-500 font-medium text-base">Belum ada data Master Dieset</p>
-                                            <p class="text-gray-400 text-sm mt-1">Silakan klik tombol "Add New Dieset" untuk menambahkan data.</p>
+                                            <p class="text-gray-500 font-medium text-base">Belum ada data Master Mold</p>
+                                            <p class="text-gray-400 text-sm mt-1">Silakan klik tombol "Add New Mold" untuk menambahkan data.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -163,7 +163,7 @@
                 <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
                     <h3 class="text-gray-800 font-bold text-lg flex items-center">
                         <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                        Tambah Data Dieset
+                        Tambah Data Mold
                     </h3>
                     <button @click="showAddModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -175,7 +175,7 @@
                     <div class="p-6 space-y-5">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Dieset Name <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mold Name <span class="text-red-500">*</span></label>
                                 <input type="text" name="name" required placeholder="Contoh: Mold A" class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-shadow">
                             </div>
                             <div>
@@ -219,7 +219,7 @@
                 <div class="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50/50">
                     <h3 class="text-gray-800 font-bold text-lg flex items-center">
                         <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                        Edit Data Dieset
+                        Edit Data Mold
                     </h3>
                     <button @click="showEditModal = false" class="text-gray-400 hover:text-gray-600 hover:bg-gray-100 p-1.5 rounded-lg transition-colors">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -232,7 +232,7 @@
                     <div class="p-6 space-y-5">
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
                             <div class="sm:col-span-2">
-                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Dieset Name <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-semibold text-gray-700 mb-1.5">Mold Name <span class="text-red-500">*</span></label>
                                 <input type="text" name="name" x-model="editData.name" required class="w-full border-gray-300 rounded-lg text-sm py-2.5 px-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm">
                             </div>
                             <div>
@@ -277,7 +277,7 @@
                     <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-5">
                         <svg class="text-red-600 w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                     </div>
-                    <h3 class="text-lg font-bold text-gray-900 mb-2">Hapus Dieset?</h3>
+                    <h3 class="text-lg font-bold text-gray-900 mb-2">Hapus Mold?</h3>
                     <p class="mb-6 text-sm text-gray-500">Anda yakin ingin menghapus data <span class="font-bold text-gray-800" x-text="deleteData.name"></span>? Data yang dihapus tidak dapat dikembalikan.</p>
                     
                     <div class="flex justify-center space-x-3">

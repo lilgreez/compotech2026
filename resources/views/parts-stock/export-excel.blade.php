@@ -1,7 +1,7 @@
 <table>
     <thead>
         <tr>
-            <th colspan="4" style="text-align: center; font-size: 14px; font-weight: bold; text-decoration: underline;">Less Stock Dieset Parts</th>
+            <th colspan="4" style="text-align: center; font-size: 14px; font-weight: bold; text-decoration: underline;">Less Stock Mold Parts</th>
         </tr>
         <tr></tr>
         <tr>

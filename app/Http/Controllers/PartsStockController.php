@@ -46,7 +46,7 @@ class PartsStockController extends Controller
     public function mailToSpv()
     {
         // 1. Generate Excel & Simpan Sementara di Storage
-        $filePath = 'exports/LessStockDiesetParts_' . time() . '.xlsx';
+        $filePath = 'exports/LessStockMoldParts_' . time() . '.xlsx';
         Excel::store(new LowStockExport, $filePath, 'local');
 
         // 2. Ambil daftar email dari tabel email_reports (Jika tabel kosong, kita pakai admin/supervior default)

@@ -1,11 +1,11 @@
 <table>
     <thead>
         <tr>
-            <th colspan="11" style="text-align: center; font-size: 14px; font-weight: bold; text-decoration: underline;">ZC Diecast - Dieset Inspection</th>
+            <th colspan="11" style="text-align: center; font-size: 14px; font-weight: bold; text-decoration: underline;">ZC Diecast - Mold Inspection</th>
         </tr>
         <tr></tr>
         <tr>
-            <th>Dieset</th>
+            <th>Mold</th>
             <th>Tanggal</th>
             <th>Parts</th>
             <th>Shoot</th>

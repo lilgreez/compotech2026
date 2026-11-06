@@ -10,14 +10,14 @@
             if (!$pageTitle) {
                 $pageTitle = match(true) {
                     request()->routeIs('dashboard') => 'Dashboard',
-                    request()->routeIs('dieset-status.show') => 'Detail Dieset Status',
-                    request()->routeIs('dieset-status.*') => 'Dieset Status',
+                    request()->routeIs('dieset-status.show') => 'Detail Mold Status',
+                    request()->routeIs('dieset-status.*') => 'Mold Status',
                     request()->routeIs('monitoring.show') => 'Detail Inspection Monitor',
                     request()->routeIs('monitoring*') => 'Inspection Monitor',
                     request()->routeIs('export') => 'Export Inspection Monitor',
                     request()->routeIs('parts-stock.*') => 'Parts Stock',
-                    request()->routeIs('master-diesets.show') => 'Detail Master Dieset',
-                    request()->routeIs('master-diesets.*') => 'Master Dieset',
+                    request()->routeIs('master-diesets.show') => 'Detail Master Mold',
+                    request()->routeIs('master-diesets.*') => 'Master Mold',
                     request()->routeIs('master-parts.*') => 'Master Parts',
                     request()->routeIs('master-inspections.*') => 'Master Inspection',
                     request()->routeIs('operators.*') => 'Operator',

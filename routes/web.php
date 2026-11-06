@@ -31,22 +31,28 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // =========================================================
-    // DIESET STATUS ROUTES (Sesuai PDF Hal 9-11)
+    // MOLD STATUS ROUTES (Sesuai PDF Hal 9-11)
     // Akses terbuka untuk semua role yang sudah login
     // =========================================================
-    Route::get('/dieset-status', [DiesetStatusController::class, 'index'])->name('dieset-status.index');
-    Route::get('/dieset-status/export',[DiesetStatusController::class, 'export'])->name('dieset-status.export');
-    Route::get('/dieset-status/{id}', [DiesetStatusController::class, 'show'])->name('dieset-status.show');
+    Route::get('/mold-status', [DiesetStatusController::class, 'index'])->name('dieset-status.index');
+    Route::get('/mold-status/export', [DiesetStatusController::class, 'export'])->name('dieset-status.export');
+    Route::get('/mold-status/{id}', [DiesetStatusController::class, 'show'])->name('dieset-status.show');
+
+    // Redirect lama dieset-status -> mold-status
+    Route::get('/dieset-status', fn() => redirect()->route('dieset-status.index'));
+    Route::get('/dieset-status/export', fn() => redirect()->route('dieset-status.export'));
+    Route::get('/dieset-status/{id}', fn($id) => redirect()->route('dieset-status.show', $id));
 
     // =========================================================
     // ADMINISTRATOR ROUTES (Master Data, Operator, Email, Logs)
     // =========================================================
     Route::middleware([RoleMiddleware::class . ':Admin'])->group(function () {
         
-        // --- Master Dieset ---
+        // --- Master Mold ---
+        Route::resource('master-molds', MasterDiesetController::class, ['names' => 'master-diesets']);
         Route::resource('master-diesets', MasterDiesetController::class);
-        Route::post('/master-diesets/{id}/generate-parts',[MasterDiesetController::class, 'storeGeneratedParts'])->name('master-diesets.generate-parts');
-        Route::put('/master-diesets/{dieset_id}/parts/{part_id}',[MasterDiesetController::class, 'updatePart'])->name('master-diesets.update-part');
+        Route::post('/master-diesets/{id}/generate-parts', [MasterDiesetController::class, 'storeGeneratedParts'])->name('master-diesets.generate-parts');
+        Route::put('/master-diesets/{dieset_id}/parts/{part_id}', [MasterDiesetController::class, 'updatePart'])->name('master-diesets.update-part');
         Route::delete('/master-diesets/{dieset_id}/parts/{part_id}', [MasterDiesetController::class, 'destroyPart'])->name('master-diesets.destroy-part');
 
         // --- Master Parts ---

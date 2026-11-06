@@ -5,8 +5,8 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
             </div>
             <div>
-                <h2 class="font-bold text-xl text-gray-800 leading-tight">Dieset Status</h2>
-                <p class="text-sm text-gray-500 mt-0.5">Monitoring kondisi dan status komponen dieset</p>
+                <h2 class="font-bold text-xl text-gray-800 leading-tight">Mold Status</h2>
+                <p class="text-sm text-gray-500 mt-0.5">Monitoring kondisi dan status komponen mold</p>
             </div>
         </div>
         
@@ -38,7 +38,7 @@
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                         </div>
-                        <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 py-2 pr-3 shadow-sm transition-shadow" placeholder="Cari Dieset atau Product..." x-on:input.debounce.500ms="$el.closest('form').submit()">
+                        <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 py-2 pr-3 shadow-sm transition-shadow" placeholder="Cari Mold atau Product..." x-on:input.debounce.500ms="$el.closest('form').submit()">
                     </div>
                 </form>
             </div>
@@ -60,7 +60,7 @@
                     <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                         <tr>
                             <th scope="col" class="px-6 py-4 font-semibold text-center w-16 border-r border-gray-200">No.</th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Dieset Name</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Mold Name</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Product Code</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Product Name / Desc</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Production Year</th>
@@ -116,7 +116,7 @@
                                         <div class="w-16 h-16 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center mb-4 shadow-sm">
                                             <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                         </div>
-                                        <p class="text-gray-500 font-medium text-base">Tidak ada data dieset ditemukan.</p>
+                                        <p class="text-gray-500 font-medium text-base">Tidak ada data mold ditemukan.</p>
                                         <p class="text-gray-400 text-sm mt-1">Coba gunakan kata kunci pencarian yang lain.</p>
                                     </div>
                                 </td>

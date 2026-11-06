@@ -100,7 +100,7 @@ class MasterPartController extends Controller
             'image_path' => $imagePath,
         ]);
 
-        return back()->with('success', 'Data Parts berhasil diperbarui. Seluruh Dieset yang memakai part ini telah di-update!');
+        return back()->with('success', 'Data Parts berhasil diperbarui. Seluruh Mold yang memakai part ini telah di-update!');
     }
 
     public function destroy($id)

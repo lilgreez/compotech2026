@@ -34,7 +34,7 @@ class MasterDiesetController extends Controller
             'production_year' => 'nullable|integer', 
         ]);
         MasterDieset::create($validated);
-        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil ditambahkan!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil ditambahkan!');
     }
 
     public function update(Request $request, MasterDieset $masterDieset): RedirectResponse
@@ -47,16 +47,16 @@ class MasterDiesetController extends Controller
             'production_year' => 'nullable|integer',
         ]);
         $masterDieset->update($validated);
-        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil diperbarui!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil diperbarui!');
     }
 
     public function destroy(MasterDieset $masterDieset): RedirectResponse
     {
         if ($masterDieset->parts()->count() > 0) {
-            return redirect()->route('master-diesets.index')->with('error', 'Gagal! Dieset tidak bisa dihapus karena memiliki Parts.');
+            return redirect()->route('master-diesets.index')->with('error', 'Gagal! Mold tidak bisa dihapus karena memiliki Parts.');
         }
         $masterDieset->delete();
-        return redirect()->route('master-diesets.index')->with('success', 'Data Dieset berhasil dihapus!');
+        return redirect()->route('master-diesets.index')->with('success', 'Data Mold berhasil dihapus!');
     }
 
     // =========================================================================

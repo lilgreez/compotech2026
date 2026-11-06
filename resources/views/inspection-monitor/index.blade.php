@@ -6,7 +6,7 @@
             </div>
             <div>
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">Monitoring Asset</h2>
-                <p class="text-sm text-gray-500 mt-0.5">Pantau dan analisis frekuensi inspeksi dieset</p>
+                <p class="text-sm text-gray-500 mt-0.5">Pantau dan analisis frekuensi inspeksi mold</p>
             </div>
         </div>
     </div>
@@ -67,7 +67,7 @@
                     <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b border-gray-200">
                         <tr>
                             <th scope="col" class="px-6 py-4 font-semibold text-center w-16 border-r border-gray-200">No.</th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Dieset Name</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Mold Name</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-center border-r border-gray-200">Product Code</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-left border-r border-gray-200">Product Name</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-center w-40">Inspection Count</th>

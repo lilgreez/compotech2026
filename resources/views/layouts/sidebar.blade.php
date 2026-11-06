@@ -29,13 +29,13 @@
             </a>
         </div>
 
-        <!-- MENU GROUP: DIESET -->
+        <!-- MENU GROUP: MOLD -->
         <div class="mb-6" x-show="sidebarOpen">
-            <p class="px-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">DieSet</p>
+            <p class="px-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest mb-3">Mold</p>
             
             <a href="{{ route('dieset-status.index') }}" class="{{ request()->routeIs('dieset-status.*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors">
                 <svg class="w-5 h-5 mr-3 {{ request()->routeIs('dieset-status.*') ? 'text-blue-500' : 'text-gray-400' }}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                <span class="text-sm font-medium">Dieset Status</span>
+                <span class="text-sm font-medium">Mold Status</span>
             </a>
 
             <a href="{{ route('monitoring') }}" class="{{ request()->routeIs('monitoring*') ? 'bg-[#32394e] text-white border-l-4 border-blue-500' : 'hover:bg-[#32394e] hover:text-white border-l-4 border-transparent' }} flex items-center px-3 py-2.5 rounded-r-md transition-colors mt-1">
@@ -63,7 +63,7 @@
                 
                 <!-- Submenu -->
                 <div x-show="masterOpen" x-transition.opacity class="bg-[#222736] mt-1 py-2 space-y-1 rounded-md">
-                    <a href="{{ route('master-diesets.index') }}" class="block px-11 py-2 text-sm {{ request()->routeIs('master-diesets.*') ? 'text-white bg-[#32394e]' : 'text-gray-400 hover:text-white hover:bg-[#32394e]' }} transition-colors">Master Dieset</a>
+                    <a href="{{ route('master-diesets.index') }}" class="block px-11 py-2 text-sm {{ request()->routeIs('master-diesets.*') ? 'text-white bg-[#32394e]' : 'text-gray-400 hover:text-white hover:bg-[#32394e]' }} transition-colors">Master Mold</a>
                     <a href="{{ route('master-parts.index') }}" class="block px-11 py-2 text-sm {{ request()->routeIs('master-parts.*') ? 'text-white bg-[#32394e]' : 'text-gray-400 hover:text-white hover:bg-[#32394e]' }} transition-colors">Master Parts</a>
                     <a href="{{ route('master-inspections.index') }}" class="block px-11 py-2 text-sm {{ request()->routeIs('master-inspections.*') ? 'text-white bg-[#32394e]' : 'text-gray-400 hover:text-white hover:bg-[#32394e]' }} transition-colors">Master Inspection</a>
                 </div>

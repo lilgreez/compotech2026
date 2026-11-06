@@ -10,7 +10,7 @@
             </div>
             <div>
                 <h2 class="font-bold text-xl text-gray-800 leading-tight">Detail Riwayat Inspeksi</h2>
-                <p class="text-sm text-gray-500 mt-0.5">Catatan inspeksi dan pergantian part pada dieset</p>
+                <p class="text-sm text-gray-500 mt-0.5">Catatan inspeksi dan pergantian part pada mold</p>
             </div>
         </div>
     </div>
@@ -171,7 +171,7 @@
                                 <svg class="w-8 h-8 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
                             </div>
                             <p class="text-gray-500 font-medium text-base">Tidak ada detail riwayat inspeksi.</p>
-                            <p class="text-gray-400 text-xs mt-1">Belum ada catatan pergantian atau perbaikan untuk dieset ini.</p>
+                            <p class="text-gray-400 text-xs mt-1">Belum ada catatan pergantian atau perbaikan untuk mold ini.</p>
                         </div>
                     </div>
                 @endif
