@@ -54,74 +54,81 @@
         deletePart: { id: '', code: '' }
     }">
 
-        <div class="px-6 py-5 bg-white border-b border-gray-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <a href="{{ route('master-diesets.index') }}" class="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors border border-transparent hover:border-blue-200">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                </a>
-                <div class="p-2.5 bg-indigo-600 rounded-lg text-white shadow-sm">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+        <!-- Mission Control Header -->
+        <div class="px-6 py-5 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center space-x-3.5">
+                    <a href="{{ route('master-diesets.index') }}" class="p-2 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200 shadow-2xs" title="Kembali ke Daftar Master Mold">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                    </a>
+                    <div class="p-2.5 bg-slate-900 rounded-xl text-white shadow-sm ring-1 ring-slate-800">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2"></path></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h2 class="font-extrabold text-xl text-slate-900 tracking-tight leading-tight">Spesifikasi Mold : {{ $dieset->name }}</h2>
+                            @if($dieset->status === 'Active')
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500"></span> Active
+                                </span>
+                            @else
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-500"></span> NA
+                                </span>
+                            @endif
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Konfigurasi part komponen, parameter dimensi, dan catatan teknis cetakan</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="font-bold text-xl text-gray-800 leading-tight">Detail Item Parts</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Kelola konfigurasi komponen untuk mold ini</p>
+                
+                <div class="flex items-center gap-2.5 w-full md:w-auto">
+                    <button @click="showGenerateModal = true" class="w-full md:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center gap-2 shadow-xs transition-colors focus:ring-4 focus:ring-blue-100">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
+                        Tambah Kategori Part
+                    </button>
                 </div>
             </div>
-            
-            <button @click="showGenerateModal = true" class="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
-                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                Add Category Part
-            </button>
         </div>
 
-        <div class="p-6 max-w-7xl mx-auto">
+        <div class="p-6 max-w-7xl mx-auto space-y-6">
             
             @if (session('success'))
-                <div class="mb-6 bg-green-50 text-green-700 p-4 rounded-lg text-sm font-medium border border-green-200 flex items-center shadow-sm">
-                    <svg class="w-5 h-5 mr-3 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    {{ session('success') }}
+                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-xl text-xs font-semibold border border-emerald-200 flex items-center shadow-2xs">
+                    <svg class="w-5 h-5 mr-3 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>{{ session('success') }}</span>
                 </div>
             @endif
 
-            <!-- Mold Full Technical Specifications (Excel Database MS) -->
-            <div class="mb-6 bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+            <!-- Mold Full Technical Specifications (Slate & Steel) -->
+            <div class="bg-white border border-slate-200 rounded-xl shadow-2xs overflow-hidden">
                 <!-- Header Banner -->
-                <div class="bg-slate-50 border-b border-gray-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-sm flex-shrink-0">
+                <div class="bg-slate-50/80 border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center space-x-3.5">
+                        <div class="w-10 h-10 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs font-mono flex-shrink-0 shadow-2xs">
                             {{ $dieset->cavity ? $dieset->cavity . 'C' : 'MD' }}
                         </div>
                         <div>
                             <div class="flex items-center space-x-2">
-                                <h3 class="text-lg font-bold text-gray-900">{{ $dieset->name }}</h3>
-                                @if($dieset->status === 'Active')
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-500"></span> Active
-                                    </span>
-                                @else
-                                    <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                                        <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-amber-500"></span> NA
-                                    </span>
-                                @endif
+                                <h3 class="text-base font-extrabold text-slate-900 tracking-tight">{{ $dieset->name }}</h3>
                             </div>
-                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-gray-500 font-mono">
-                                <span>Kode: <strong class="text-gray-800">{{ $dieset->kode_mold ?? '-' }}</strong></span>
-                                <span class="text-gray-300">|</span>
-                                <span>Cust: <strong class="text-gray-800 font-sans">{{ $dieset->ownership ?? 'Compotec' }}</strong></span>
+                            <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs text-slate-500 font-mono">
+                                <span>Kode: <strong class="text-slate-800 font-bold">{{ $dieset->kode_mold ?? '-' }}</strong></span>
+                                <span class="text-slate-300">|</span>
+                                <span>Cust: <strong class="text-slate-800 font-sans font-semibold">{{ $dieset->ownership ?? 'Compotec' }}</strong></span>
                                 @if($dieset->product_code)
-                                    <span class="text-gray-300">|</span>
-                                    <span>Part No: <strong class="text-gray-800">{{ $dieset->product_code }}</strong></span>
+                                    <span class="text-slate-300">|</span>
+                                    <span>Part No: <strong class="text-slate-800 font-bold">{{ $dieset->product_code }}</strong></span>
                                 @endif
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-3">
+                    <div class="flex items-center space-x-4">
                         <div class="text-left md:text-right">
-                            <span class="text-[11px] font-semibold text-gray-500 uppercase tracking-wider block">Total Shoot</span>
-                            <span class="text-base font-bold text-gray-900 font-mono">{{ number_format($dieset->total_shoot) }} Pcs</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider block">Total Shoot</span>
+                            <span class="text-base font-black text-slate-900 font-mono tabular-nums">{{ number_format($dieset->total_shoot) }} Pcs</span>
                         </div>
-                        <a href="{{ route('master-diesets.index') }}" class="px-3 py-1.5 bg-white border border-gray-300 text-gray-700 rounded-lg text-xs font-medium hover:bg-gray-50 transition shadow-sm">
-                            Kembali ke Index
+                        <a href="{{ route('master-diesets.index') }}" class="px-3 py-1.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-semibold hover:bg-slate-50 transition shadow-2xs">
+                            Index Master Mold
                         </a>
                     </div>
                 </div>

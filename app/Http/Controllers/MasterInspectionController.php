@@ -12,18 +12,36 @@ class MasterInspectionController extends Controller
     {
         // Parameter tab: kerusakan, tindakan, alasan
         $tab = $request->query('tab', 'kerusakan');
+        if (!in_array($tab, ['kerusakan', 'tindakan', 'alasan'])) {
+            $tab = 'kerusakan';
+        }
+
         $search = $request->query('search');
-        $perPage = $request->query('per_page', 10);
+        $perPage = (int) $request->query('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         $query = MasterInspection::where('type', $tab);
 
         if ($search) {
-            $query->where('name', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
         }
 
         $inspections = $query->orderBy('id', 'desc')->paginate($perPage);
 
-        return view('admin.master-inspections.index', compact('inspections', 'tab', 'search', 'perPage'));
+        // KPI metrics across all dictionary categories
+        $stats = [
+            'total' => MasterInspection::count(),
+            'kerusakan' => MasterInspection::where('type', 'kerusakan')->count(),
+            'tindakan' => MasterInspection::where('type', 'tindakan')->count(),
+            'alasan' => MasterInspection::where('type', 'alasan')->count(),
+        ];
+
+        return view('admin.master-inspections.index', compact('inspections', 'tab', 'search', 'perPage', 'stats'));
     }
 
     public function store(Request $request)

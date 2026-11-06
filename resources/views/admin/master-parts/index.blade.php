@@ -39,36 +39,47 @@
         }
     }">
 
-        <!-- Page Header -->
-        <div class="px-6 py-5 bg-white border-b border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <div class="flex items-center space-x-3.5">
-                <div class="p-2.5 bg-slate-900 rounded-lg text-white shadow-sm">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+        <!-- Mission Control Page Header -->
+        <div class="px-6 py-5 bg-white border-b border-slate-200">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div class="flex items-center space-x-3.5">
+                    <div class="p-2.5 bg-slate-900 rounded-xl text-white shadow-sm ring-1 ring-slate-800">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2.5 flex-wrap">
+                            <h2 class="font-extrabold text-xl text-slate-900 tracking-tight leading-tight">Master Parts</h2>
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                <span class="relative flex h-2 w-2">
+                                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                                </span>
+                                Katalog Terintegrasi : {{ number_format($totalParts) }} Parts
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-500 mt-1">Database master suku cadang mold, kontrol kuantitas stok gudang, dan parameter lifecycle max shoot</p>
+                    </div>
                 </div>
-                <div>
-                    <h2 class="font-bold text-xl text-gray-900 leading-tight">Master Parts</h2>
-                    <p class="text-sm text-gray-500 mt-0.5">Database master suku cadang mold, kontrol kuantitas stok, dan parameter lifecycle</p>
-                </div>
-            </div>
-            
-            <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                <button type="button" @click="showImportModal = true" class="w-full sm:w-auto px-3.5 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-medium flex items-center justify-center hover:bg-gray-50 focus:ring-4 focus:ring-gray-100 transition-all shadow-sm">
-                    <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                    Upload Excel
-                </button>
-
-                <form action="{{ route('master-parts.sync') }}" method="POST" class="inline w-full sm:w-auto">
-                    @csrf
-                    <button type="submit" class="w-full sm:w-auto px-3.5 py-2 bg-amber-500 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-amber-600 focus:ring-4 focus:ring-amber-100 transition-all shadow-sm">
-                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
-                        Sync from Wings
-                    </button>
-                </form>
                 
-                <button @click="imagePreview = null; formData = { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' }; showAddModal = true" class="w-full sm:w-auto px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium flex items-center justify-center hover:bg-blue-700 focus:ring-4 focus:ring-blue-100 transition-all shadow-sm">
-                    <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
-                    Tambah Part
-                </button>
+                <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                    <button type="button" @click="showImportModal = true" class="w-full sm:w-auto px-3.5 py-2.5 bg-white border border-slate-300 text-slate-700 rounded-lg text-xs font-bold inline-flex items-center justify-center hover:bg-slate-50 focus:ring-4 focus:ring-slate-100 transition shadow-2xs">
+                        <svg class="w-4 h-4 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Upload Excel
+                    </button>
+
+                    <form action="{{ route('master-parts.sync') }}" method="POST" class="inline w-full sm:w-auto">
+                        @csrf
+                        <button type="submit" class="w-full sm:w-auto px-3.5 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center focus:ring-4 focus:ring-amber-100 transition shadow-2xs">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> 
+                            Sync from Wings
+                        </button>
+                    </form>
+                    
+                    <button @click="imagePreview = null; formData = { id: '', code: '', name: '', desc: '', stock: 0, max_shoot: 3000000, notes: '' }; showAddModal = true" class="w-full sm:w-auto px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold inline-flex items-center justify-center focus:ring-4 focus:ring-blue-100 transition shadow-2xs">
+                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg> 
+                        Tambah Part
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -76,16 +87,16 @@
             
             <!-- Alert Notifications -->
             @if (session('success'))
-                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-xl text-sm font-medium border border-emerald-200 flex items-center shadow-sm">
+                <div class="bg-emerald-50 text-emerald-800 p-4 rounded-xl text-xs font-semibold border border-emerald-200 flex items-center shadow-2xs">
                     <svg class="w-5 h-5 mr-3 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span>{{ session('success') }}</span>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div class="bg-red-50 text-red-800 p-4 rounded-xl text-sm border border-red-200 shadow-sm">
-                    <div class="font-semibold mb-1 flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-red-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <div class="bg-rose-50 text-rose-800 p-4 rounded-xl text-xs border border-rose-200 shadow-2xs">
+                    <div class="font-bold mb-1 flex items-center">
+                        <svg class="w-5 h-5 mr-2 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         Terdapat kesalahan input:
                     </div>
                     <ul class="list-disc pl-9 space-y-1">
@@ -96,104 +107,121 @@
                 </div>
             @endif
 
-            <!-- KPI Metric Cards -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <!-- KPI Metric Cards (Slate & Steel) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- Card 1: Total Master Items -->
-                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs hover:border-slate-300 transition-colors">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Master Parts</p>
-                            <h3 class="text-2xl font-bold text-gray-900 mt-1.5 tabular-nums">{{ number_format($totalParts) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">Item katalog aktif</p>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Master Parts</p>
+                        <div class="w-10 h-10 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
                         </div>
-                        <div class="p-3 bg-slate-100 rounded-lg text-slate-700">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
-                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl sm:text-3xl font-black text-slate-900 font-mono tabular-nums tracking-tight">{{ number_format($totalParts) }}</h3>
+                        <p class="text-xs text-slate-400 mt-1">Item katalog aktif</p>
                     </div>
                 </div>
 
                 <!-- Card 2: Total Stock Qty -->
-                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs hover:border-blue-300 transition-colors">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Total Kuantitas Stok</p>
-                            <h3 class="text-2xl font-bold text-blue-600 mt-1.5 tabular-nums">{{ number_format($totalStock) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">Akumulasi seluruh part</p>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Kuantitas Stok</p>
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
                         </div>
-                        <div class="p-3 bg-blue-50 rounded-lg text-blue-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
-                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl sm:text-3xl font-black text-blue-600 font-mono tabular-nums tracking-tight">{{ number_format($totalStock) }}</h3>
+                        <p class="text-xs text-slate-400 mt-1">Akumulasi seluruh part</p>
                     </div>
                 </div>
 
                 <!-- Card 3: Safe Stock (> 2) -->
-                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs hover:border-emerald-300 transition-colors">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Stok Aman (> 2)</p>
-                            <h3 class="text-2xl font-bold text-emerald-600 mt-1.5 tabular-nums">{{ number_format($safeStock) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">Level cadangan aman</p>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Stok Aman (> 2)</p>
+                        <div class="w-10 h-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
                         </div>
-                        <div class="p-3 bg-emerald-50 rounded-lg text-emerald-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl sm:text-3xl font-black text-emerald-600 font-mono tabular-nums tracking-tight">{{ number_format($safeStock) }}</h3>
+                        <p class="text-xs text-slate-400 mt-1">Level cadangan aman</p>
                     </div>
                 </div>
 
                 <!-- Card 4: Critical Stock (<= 2) -->
-                <div class="bg-white rounded-xl border border-gray-200 p-5 shadow-sm">
+                <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-2xs hover:border-rose-300 transition-colors">
                     <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-semibold uppercase tracking-wider text-gray-500">Stok Kritis (<= 2)</p>
-                            <h3 class="text-2xl font-bold {{ $criticalStock > 0 ? 'text-red-600' : 'text-gray-900' }} mt-1.5 tabular-nums">{{ number_format($criticalStock) }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">Perlu restock segera</p>
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">Stok Kritis (<= 2)</p>
+                        <div class="w-10 h-10 rounded-lg {{ $criticalStock > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-100 text-slate-500' }} flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                         </div>
-                        <div class="p-3 {{ $criticalStock > 0 ? 'bg-red-50 text-red-600' : 'bg-gray-100 text-gray-500' }} rounded-lg">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <h3 class="text-2xl sm:text-3xl font-black {{ $criticalStock > 0 ? 'text-rose-600' : 'text-slate-900' }} font-mono tabular-nums tracking-tight">{{ number_format($criticalStock) }}</h3>
+                        <p class="text-xs text-slate-400 mt-1">Perlu restock segera</p>
                     </div>
                 </div>
             </div>
 
-            <!-- Table Container -->
-            <div class="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+            <!-- Table Container (Slate & Steel) -->
+            <div class="bg-white shadow-2xs rounded-xl border border-slate-200 overflow-hidden">
                 
-                <!-- Filter Bar -->
-                <div class="p-5 border-b border-gray-200 bg-gray-50/50 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-4">
-                    <form method="GET" action="{{ route('master-parts.index') }}" class="w-full flex flex-col md:flex-row justify-between items-stretch md:items-center gap-4">
-                        
-                        <div class="flex flex-wrap items-center gap-3">
-                            <!-- Entries per page -->
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-semibold uppercase text-gray-500">Show:</span>
-                                <select name="per_page" class="border-gray-300 rounded-lg py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm cursor-pointer" onchange="this.form.submit()">
-                                    <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
-                                    <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
-                                    <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
-                                    <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
-                                </select>
-                            </div>
+                <!-- Quick Status Filter Pills Header -->
+                <div class="px-5 pt-4 pb-3 border-b border-slate-200 bg-slate-50/60 flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center space-x-1.5 overflow-x-auto py-0.5">
+                        <a href="{{ route('master-parts.index', array_merge(request()->except(['stock_filter', 'page']), ['stock_filter' => 'all'])) }}" 
+                           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1.5 {{ ($stockFilter ?? 'all') === 'all' ? 'bg-slate-900 text-white shadow-2xs' : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200' }}">
+                            Semua Part
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-mono {{ ($stockFilter ?? 'all') === 'all' ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-600' }}">{{ number_format($totalParts) }}</span>
+                        </a>
+                        <a href="{{ route('master-parts.index', array_merge(request()->except(['stock_filter', 'page']), ['stock_filter' => 'safe'])) }}" 
+                           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1.5 {{ ($stockFilter ?? '') === 'safe' ? 'bg-emerald-600 text-white shadow-2xs' : 'bg-white text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 border border-slate-200' }}">
+                            Stok Aman (> 2)
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-mono {{ ($stockFilter ?? '') === 'safe' ? 'bg-emerald-700 text-emerald-100' : 'bg-emerald-50 text-emerald-700' }}">{{ number_format($safeStock) }}</span>
+                        </a>
+                        <a href="{{ route('master-parts.index', array_merge(request()->except(['stock_filter', 'page']), ['stock_filter' => 'critical'])) }}" 
+                           class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-colors inline-flex items-center gap-1.5 {{ ($stockFilter ?? '') === 'critical' ? 'bg-rose-600 text-white shadow-2xs' : 'bg-white text-slate-600 hover:bg-rose-50 hover:text-rose-700 border border-slate-200' }}">
+                            Stok Kritis (<= 2)
+                            <span class="px-1.5 py-0.2 rounded-full text-[10px] font-mono {{ ($stockFilter ?? '') === 'critical' ? 'bg-rose-700 text-rose-100' : 'bg-rose-50 text-rose-700' }}">{{ number_format($criticalStock) }}</span>
+                        </a>
+                    </div>
 
-                            <!-- Stock Filter Tabs -->
-                            <div class="flex items-center space-x-2">
-                                <span class="text-xs font-semibold uppercase text-gray-500">Status Stok:</span>
-                                <select name="stock_filter" class="border-gray-300 rounded-lg py-1.5 px-3 text-sm focus:ring-blue-500 focus:border-blue-500 text-gray-700 bg-white shadow-sm cursor-pointer" onchange="this.form.submit()">
-                                    <option value="all" {{ ($stockFilter ?? 'all') == 'all' ? 'selected' : '' }}>Semua Stok ({{ $totalParts }})</option>
-                                    <option value="safe" {{ ($stockFilter ?? '') == 'safe' ? 'selected' : '' }}>Stok Aman (> 2)</option>
-                                    <option value="critical" {{ ($stockFilter ?? '') == 'critical' ? 'selected' : '' }}>Stok Kritis (<= 2)</option>
-                                    <option value="empty" {{ ($stockFilter ?? '') == 'empty' ? 'selected' : '' }}>Stok Kosong (= 0)</option>
-                                </select>
-                            </div>
+                    @if($search || ($stockFilter && $stockFilter !== 'all'))
+                        <a href="{{ route('master-parts.index') }}" class="px-2.5 py-1.5 text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-lg transition-colors border border-rose-200 inline-flex items-center gap-1">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            Reset Filter
+                        </a>
+                    @endif
+                </div>
+
+                <!-- Table Controls & Search -->
+                <div class="p-4 border-b border-slate-200 bg-white">
+                    <form method="GET" action="{{ route('master-parts.index') }}" class="flex flex-col md:flex-row justify-between items-stretch md:items-center gap-3">
+                        @if($stockFilter && $stockFilter !== 'all')
+                            <input type="hidden" name="stock_filter" value="{{ $stockFilter }}">
+                        @endif
+
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold uppercase text-slate-500">Show:</span>
+                            <select name="per_page" class="border-slate-300 rounded-lg py-1.5 px-3 text-xs font-semibold focus:ring-blue-500 focus:border-blue-500 text-slate-700 bg-white shadow-2xs cursor-pointer" onchange="this.form.submit()">
+                                <option value="10" {{ $perPage == 10 ? 'selected' : '' }}>10</option>
+                                <option value="25" {{ $perPage == 25 ? 'selected' : '' }}>25</option>
+                                <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50</option>
+                                <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100</option>
+                            </select>
                         </div>
                         
                         <!-- Search Box -->
                         <div class="relative w-full md:w-80">
-                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 pr-8 py-2 shadow-sm transition" placeholder="Cari Item No. atau Deskripsi..." onkeydown="if(event.key === 'Enter') this.form.submit()">
+                            <input type="text" name="search" value="{{ $search }}" class="bg-white border border-slate-300 text-slate-900 text-xs rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-9 pr-8 py-2 shadow-2xs transition" placeholder="Cari Item No. atau Deskripsi..." onkeydown="if(event.key === 'Enter') this.form.submit()">
                             @if($search)
-                                <a href="{{ route('master-parts.index', ['per_page' => $perPage, 'stock_filter' => $stockFilter]) }}" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600">
+                                <a href="{{ route('master-parts.index', array_merge(request()->except('search'))) }}" class="absolute inset-y-0 right-0 flex items-center pr-2.5 text-slate-400 hover:text-slate-600">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 </a>
                             @endif
@@ -201,53 +229,53 @@
                     </form>
                 </div>
 
-                <!-- Table Content -->
+                <!-- Table Content (Slate & Steel) -->
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm text-left whitespace-nowrap">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50/80 border-b border-gray-200">
+                    <table class="w-full text-xs text-left whitespace-nowrap">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50 border-b border-slate-200">
                             <tr>
-                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200 w-16">No.</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Item No. / Part Code</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Description / Part Name</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200">Cumulative Stock</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold text-right border-r border-gray-200">Max Shoot</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold text-center border-r border-gray-200">Foto</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold border-r border-gray-200">Notes</th>
-                                <th scope="col" class="px-5 py-3.5 font-semibold text-center min-w-[140px]">Action</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-slate-200 w-14">No.</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold border-r border-slate-200">Item No. / Part Code</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold border-r border-slate-200">Description / Part Name</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-slate-200">Cumulative Stock</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-right border-r border-slate-200">Max Shoot</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center border-r border-slate-200">Foto</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold border-r border-slate-200">Notes</th>
+                                <th scope="col" class="px-4 py-3.5 font-bold text-center min-w-[120px]">Action</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100">
+                        <tbody class="divide-y divide-slate-100">
                             @forelse($parts as $index => $part)
-                                <tr class="bg-white hover:bg-slate-50/80 transition-colors {{ $part->current_stock <= 2 ? 'bg-red-50/20' : '' }}">
+                                <tr class="bg-white hover:bg-slate-50/80 transition-colors {{ $part->current_stock <= 2 ? 'bg-rose-50/15' : '' }}">
                                     <!-- No. -->
-                                    <td class="px-5 py-3.5 text-center text-gray-500 border-r border-gray-100 tabular-nums">
+                                    <td class="px-4 py-3 text-center text-slate-400 border-r border-slate-100 font-mono tabular-nums">
                                         {{ $parts->firstItem() + $index }}
                                     </td>
                                     
                                     <!-- Item No / Code -->
-                                    <td class="px-5 py-3.5 border-r border-gray-100">
-                                        <div class="font-mono font-bold text-gray-900 tracking-tight text-xs bg-gray-100 px-2 py-1 rounded inline-block">
+                                    <td class="px-4 py-3 border-r border-slate-100">
+                                        <span class="font-mono font-bold text-slate-800 tracking-tight text-xs bg-slate-100 border border-slate-200 px-2 py-0.5 rounded shadow-2xs inline-block">
                                             {{ $part->part_code }}
-                                        </div>
+                                        </span>
                                     </td>
 
                                     <!-- Description / Name -->
-                                    <td class="px-5 py-3.5 border-r border-gray-100">
-                                        <div class="font-semibold text-gray-900">{{ $part->name }}</div>
+                                    <td class="px-4 py-3 border-r border-slate-100">
+                                        <div class="font-bold text-slate-900">{{ $part->name }}</div>
                                         @if($part->description && $part->description !== $part->name)
-                                            <div class="text-xs text-gray-500 mt-0.5 truncate max-w-xs" title="{{ $part->description }}">{{ $part->description }}</div>
+                                            <div class="text-[11px] text-slate-500 mt-0.5 truncate max-w-xs" title="{{ $part->description }}">{{ $part->description }}</div>
                                         @endif
                                     </td>
 
                                     <!-- Cumulative Stock -->
-                                    <td class="px-5 py-3.5 text-center border-r border-gray-100">
+                                    <td class="px-4 py-3 text-center border-r border-slate-100">
                                         @if($part->current_stock <= 2)
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold tabular-nums bg-red-50 text-red-700 border border-red-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-red-500 mr-1.5"></span>
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tabular-nums bg-rose-50 text-rose-700 border border-rose-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-rose-500 mr-1.5"></span>
                                                 {{ number_format($part->current_stock) }} pcs
                                             </span>
                                         @else
-                                            <span class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold tabular-nums bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold font-mono tabular-nums bg-emerald-50 text-emerald-700 border border-emerald-200">
                                                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
                                                 {{ number_format($part->current_stock) }} pcs
                                             </span>
@@ -255,34 +283,34 @@
                                     </td>
 
                                     <!-- Max Shoot -->
-                                    <td class="px-5 py-3.5 text-right border-r border-gray-100 font-mono font-medium text-slate-700 tabular-nums">
+                                    <td class="px-4 py-3 text-right border-r border-slate-100 font-mono font-bold text-slate-700 tabular-nums">
                                         {{ number_format($part->max_shoot) }}
                                     </td>
 
                                     <!-- Foto -->
-                                    <td class="px-5 py-2.5 text-center border-r border-gray-100">
+                                    <td class="px-4 py-2.5 text-center border-r border-slate-100">
                                         @if($part->image_path)
                                             <div class="flex justify-center items-center">
-                                                <img src="{{ asset('storage/'.$part->image_path) }}" alt="{{ $part->part_code }}" class="h-9 w-12 object-cover rounded border border-gray-200 shadow-sm hover:scale-110 transition-transform">
+                                                <img src="{{ asset('storage/'.$part->image_path) }}" alt="{{ $part->part_code }}" class="h-8 w-11 object-cover rounded border border-slate-200 shadow-2xs hover:scale-110 transition-transform cursor-pointer">
                                             </div>
                                         @else
-                                            <span class="text-[11px] text-gray-400 italic">No image</span>
+                                            <span class="text-[10px] text-slate-400 italic">No image</span>
                                         @endif
                                     </td>
 
                                     <!-- Notes -->
-                                    <td class="px-5 py-3.5 text-gray-500 border-r border-gray-100 text-xs truncate max-w-[180px]" title="{{ $part->item_notes }}">
+                                    <td class="px-4 py-3 text-slate-500 border-r border-slate-100 text-xs truncate max-w-[180px]" title="{{ $part->item_notes }}">
                                         {{ $part->item_notes ?: '-' }}
                                     </td>
                                     
                                     <!-- Action -->
-                                    <td class="px-5 py-3.5 text-center">
+                                    <td class="px-4 py-3 text-center">
                                         <div class="flex justify-center items-center space-x-1.5">
-                                            <button type="button" @click="openEdit({{ $part->toJson() }})" class="px-2.5 py-1.5 bg-blue-600 text-white rounded text-xs font-medium inline-flex items-center hover:bg-blue-700 shadow-sm transition">
-                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg> Edit
+                                            <button type="button" @click="openEdit({{ $part->toJson() }})" class="p-1.5 text-slate-500 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors border border-transparent hover:border-amber-200" title="Edit Part">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg>
                                             </button>
-                                            <button type="button" @click="openDelete({{ $part->toJson() }})" class="px-2.5 py-1.5 bg-red-600 text-white rounded text-xs font-medium inline-flex items-center hover:bg-red-700 shadow-sm transition">
-                                                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Hapus
+                                            <button type="button" @click="openDelete({{ $part->toJson() }})" class="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors border border-transparent hover:border-rose-200" title="Hapus Part">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                                             </button>
                                         </div>
                                     </td>
@@ -291,11 +319,11 @@
                                 <tr>
                                     <td colspan="8" class="px-6 py-14 text-center">
                                         <div class="flex flex-col items-center justify-center max-w-sm mx-auto">
-                                            <div class="p-3 bg-gray-100 rounded-full text-gray-400 mb-3">
-                                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                            <div class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-3 border border-slate-200">
+                                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                             </div>
-                                            <h4 class="text-base font-bold text-gray-800">Tidak ada data Master Parts</h4>
-                                            <p class="text-sm text-gray-500 mt-1 mb-4">
+                                            <h4 class="text-sm font-bold text-slate-900">Tidak ada data Master Parts</h4>
+                                            <p class="text-xs text-slate-500 mt-1 mb-3">
                                                 @if($search || ($stockFilter && $stockFilter !== 'all'))
                                                     Tidak ditemukan part dengan kata kunci atau filter yang Anda tentukan.
                                                 @else
@@ -303,11 +331,11 @@
                                                 @endif
                                             </p>
                                             @if($search || ($stockFilter && $stockFilter !== 'all'))
-                                                <a href="{{ route('master-parts.index') }}" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold transition">
+                                                <a href="{{ route('master-parts.index') }}" class="px-3.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-semibold transition">
                                                     Reset Filter
                                                 </a>
                                             @else
-                                                <button type="button" @click="showImportModal = true" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-sm transition">
+                                                <button type="button" @click="showImportModal = true" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-semibold shadow-xs transition">
                                                     Upload File Excel
                                                 </button>
                                             @endif
@@ -320,9 +348,9 @@
                 </div>
 
                 <!-- Pagination footer -->
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between text-sm text-gray-500 gap-4">
+                <div class="px-6 py-4 border-t border-slate-200 bg-slate-50/70 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
                     <div>
-                        Menampilkan <span class="font-semibold text-gray-900 tabular-nums">{{ $parts->firstItem() ?? 0 }}</span> sampai <span class="font-semibold text-gray-900 tabular-nums">{{ $parts->lastItem() ?? 0 }}</span> dari total <span class="font-semibold text-gray-900 tabular-nums">{{ number_format($parts->total()) }}</span> parts
+                        Menampilkan <span class="font-bold text-slate-900 font-mono tabular-nums">{{ $parts->firstItem() ?? 0 }}</span> sampai <span class="font-bold text-slate-900 font-mono tabular-nums">{{ $parts->lastItem() ?? 0 }}</span> dari total <span class="font-bold text-slate-900 font-mono tabular-nums">{{ number_format($parts->total()) }}</span> parts
                     </div>
                     <div>
                         {{ $parts->appends(request()->query())->links('pagination::tailwind') }}
