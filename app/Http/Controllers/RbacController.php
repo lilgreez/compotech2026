@@ -13,51 +13,37 @@ use Illuminate\Support\Facades\DB;
 class RbacController extends Controller
 {
     /**
-     * Display the RBAC management interface.
+     * Display the Role Management CRUD Index Table.
      */
     public function index(Request $request): View
     {
-        $search = $request->input('search_user');
-        $activeTab = $request->input('tab', 'roles');
+        $search = $request->input('search');
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
-        // Roles with user counts and permissions
-        $roles = Role::withCount('users')->with('permissions')->get();
+        $query = Role::withCount('users')->with('permissions');
 
-        // All permissions grouped by module
-        $permissions = Permission::all();
-        $groupedPermissions = $permissions->groupBy('module');
-
-        // User management query with assigned roles
-        $userQuery = User::with('roles');
         if ($search) {
-            $userQuery->where(function ($q) use ($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%")
-                  ->orWhere('nik', 'like', "%{$search}%")
-                  ->orWhere('department', 'like', "%{$search}%")
-                  ->orWhereHas('roles', function ($rq) use ($search) {
-                      $rq->where('name', 'like', "%{$search}%");
-                  });
+                  ->orWhere('description', 'like', "%{$search}%");
             });
         }
-        $users = $userQuery->orderBy('id', 'asc')->paginate(15)->appends(['tab' => 'users', 'search_user' => $search]);
 
-        // KPI Summary Stats
-        $stats = [
-            'total_roles' => $roles->count(),
-            'total_users' => User::count(),
-            'total_permissions' => $permissions->count(),
-            'admin_users' => User::whereHas('roles', fn($q) => $q->where('name', 'Admin'))->count(),
-        ];
+        $roles = $query->orderBy('id', 'asc')->paginate($perPage)->appends(request()->query());
+
+        // All permissions grouped by module for create/edit modal forms
+        $permissions = Permission::all();
+        $groupedPermissions = $permissions->groupBy('module');
 
         return view('admin.rbac.index', compact(
             'roles',
             'permissions',
             'groupedPermissions',
-            'users',
-            'stats',
-            'activeTab',
-            'search'
+            'search',
+            'perPage'
         ));
     }
 
@@ -84,8 +70,8 @@ class RbacController extends Controller
             }
         });
 
-        return redirect()->route('rbac.index', ['tab' => 'roles'])
-            ->with('success', "Role '{$request->name}' berhasil ditambahkan.");
+        return redirect()->route('rbac.index')
+            ->with('success', "Role '{$request->name}' berhasil ditambahkan!");
     }
 
     /**
@@ -102,7 +88,7 @@ class RbacController extends Controller
             'permissions.*' => 'exists:permissions,id',
         ]);
 
-        // Protected role: Admin name cannot be changed
+        // Safety: Admin superuser role name cannot be renamed
         if ($role->name === 'Admin' && strtolower($validated['name']) !== 'admin') {
             return back()->with('error', "Nama role 'Admin' tidak dapat diubah karena merupakan superuser sistem.");
         }
@@ -121,84 +107,32 @@ class RbacController extends Controller
             }
         });
 
-        return redirect()->route('rbac.index', ['tab' => 'roles'])
-            ->with('success', "Role '{$role->name}' dan hak aksesnya berhasil diperbarui.");
+        return redirect()->route('rbac.index')
+            ->with('success', "Role '{$role->name}' dan hak aksesnya berhasil diperbarui!");
     }
 
     /**
-     * Delete a custom role.
+     * Delete a role.
      */
     public function destroyRole($id): RedirectResponse
     {
         $role = Role::withCount('users')->findOrFail($id);
 
-        // Core system roles cannot be deleted
-        $protectedRoles = ['Admin', 'Supervisor', 'Maintenance', 'Operator'];
-        if (in_array($role->name, $protectedRoles)) {
-            return back()->with('error', "Role '{$role->name}' adalah role bawaan sistem dan tidak boleh dihapus.");
+        // Core Admin superuser role cannot be deleted
+        if ($role->name === 'Admin') {
+            return back()->with('error', "Role 'Admin' adalah superuser sistem utama dan tidak dapat dihapus.");
         }
 
-        // Cannot delete role if assigned to any user
+        // Cannot delete role if currently assigned to any active user
         if ($role->users_count > 0) {
-            return back()->with('error', "Gagal menghapus role '{$role->name}'. Masih terdapat {$role->users_count} user yang memiliki role ini.");
+            return back()->with('error', "Gagal menghapus role '{$role->name}'. Masih terdapat {$role->users_count} pengguna aktif yang memiliki role ini.");
         }
 
         $roleName = $role->name;
         $role->permissions()->detach();
         $role->delete();
 
-        return redirect()->route('rbac.index', ['tab' => 'roles'])
-            ->with('success', "Role '{$roleName}' berhasil dihapus.");
-    }
-
-    /**
-     * Update user's assigned role(s).
-     */
-    public function updateUserRole(Request $request, $id): RedirectResponse
-    {
-        $user = User::findOrFail($id);
-
-        $request->validate([
-            'roles' => 'required|array|min:1',
-            'roles.*' => 'exists:roles,id',
-        ]);
-
-        // Safety: Ensure user 1 always retains Admin role
-        if ($user->id === 1) {
-            $adminRole = Role::where('name', 'Admin')->first();
-            if ($adminRole && !in_array($adminRole->id, $request->roles)) {
-                return back()->with('error', "Role 'Admin' pada Super Admin utama tidak dapat dicabut.");
-            }
-        }
-
-        $user->roles()->sync($request->roles);
-
-        return redirect()->route('rbac.index', ['tab' => 'users'])
-            ->with('success', "Role untuk pengguna '{$user->name}' berhasil diperbarui.");
-    }
-
-    /**
-     * Batch update permissions across roles from the matrix view.
-     */
-    public function syncMatrix(Request $request): RedirectResponse
-    {
-        $matrix = $request->input('matrix', []); // format: [role_id => [perm_id_1, perm_id_2, ...]]
-
-        DB::transaction(function () use ($matrix) {
-            $allRoles = Role::all();
-            foreach ($allRoles as $role) {
-                // If role is Admin, always retain all permissions
-                if ($role->name === 'Admin') {
-                    $role->permissions()->sync(Permission::all());
-                    continue;
-                }
-
-                $rolePerms = $matrix[$role->id] ?? [];
-                $role->permissions()->sync($rolePerms);
-            }
-        });
-
-        return redirect()->route('rbac.index', ['tab' => 'matrix'])
-            ->with('success', "Matrix hak akses permission untuk seluruh role berhasil disimpan.");
+        return redirect()->route('rbac.index')
+            ->with('success', "Role '{$roleName}' berhasil dihapus!");
     }
 }

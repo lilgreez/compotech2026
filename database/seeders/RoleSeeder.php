@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Role;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class RoleSeeder extends Seeder
@@ -13,30 +12,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            [
-                'name' => 'Admin',
-                'description' => 'Full access to all features',
-            ],
-            [
-                'name' => 'Supervisor',
-                'description' => 'View all data, approve requests, export reports',
-            ],
-            [
-                'name' => 'Maintenance',
-                'description' => 'CRUD operations for inspections',
-            ],
-            [
-                'name' => 'Operator',
-                'description' => 'Create inspection records only',
-            ],
-        ];
-
-        foreach ($roles as $role) {
-            Role::firstOrCreate(
-                ['name' => $role['name']],
-                ['description' => $role['description']]
-            );
-        }
+        // Only seed primary Super Admin role, no dummy roles
+        Role::firstOrCreate(
+            ['name' => 'Admin'],
+            ['description' => 'Super Administrator - Full system access']
+        );
     }
 }

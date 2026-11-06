@@ -152,51 +152,10 @@ class RbacPermissionSeeder extends Seeder
             );
         }
 
-        // Attach default permissions to initial roles
+        // Attach all permissions to Admin
         $admin = Role::where('name', 'Admin')->first();
         if ($admin) {
             $admin->permissions()->sync(Permission::all());
-        }
-
-        $supervisor = Role::where('name', 'Supervisor')->first();
-        if ($supervisor) {
-            $spvPerms = Permission::whereIn('name', [
-                'dashboard.view',
-                'mold_status.view',
-                'mold_status.export',
-                'inspection.view',
-                'inspection.approve',
-                'inspection.export',
-                'parts_stock.view',
-                'parts_stock.notify',
-                'master_molds.view',
-            ])->get();
-            $supervisor->permissions()->sync($spvPerms);
-        }
-
-        $maintenance = Role::where('name', 'Maintenance')->first();
-        if ($maintenance) {
-            $maintPerms = Permission::whereIn('name', [
-                'dashboard.view',
-                'mold_status.view',
-                'inspection.view',
-                'inspection.create',
-                'inspection.update',
-                'parts_stock.view',
-                'parts_stock.manage',
-                'master_molds.view',
-            ])->get();
-            $maintenance->permissions()->sync($maintPerms);
-        }
-
-        $operator = Role::where('name', 'Operator')->first();
-        if ($operator) {
-            $opPerms = Permission::whereIn('name', [
-                'dashboard.view',
-                'mold_status.view',
-                'inspection.create',
-            ])->get();
-            $operator->permissions()->sync($opPerms);
         }
     }
 }
