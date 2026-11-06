@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             RbacPermissionSeeder::class,
             MasterPartSeeder::class,
+            MoldComponentSeeder::class,
         ]);
     }
 }
