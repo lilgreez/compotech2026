@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             RbacPermissionSeeder::class,
             MasterPartSeeder::class,
             MoldComponentSeeder::class,
+            InspectionHistorySeeder::class,
         ]);
     }
 }

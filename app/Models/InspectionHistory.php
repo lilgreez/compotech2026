@@ -13,6 +13,8 @@ class InspectionHistory extends Model
         'part_id',
         'operator_id',
         'inspection_date',
+        'parts_shoot',
+        'total_shoot',
         'condition',
         'damage_details',
         'action_taken',
