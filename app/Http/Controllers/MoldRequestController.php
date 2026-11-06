@@ -16,6 +16,10 @@ class MoldRequestController extends Controller
     {
         $search = $request->input('search');
         $statusFilter = $request->input('status', 'all');
+        $perPage = (int) $request->input('per_page', 10);
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
 
         $baseQuery = MoldRequest::query();
 
@@ -23,6 +27,7 @@ class MoldRequestController extends Controller
         $totalSpk = (clone $baseQuery)->count();
         $inProgressSpk = (clone $baseQuery)->where('status', 'In Progress')->count();
         $completedSpk = (clone $baseQuery)->where('status', 'Completed')->count();
+        $draftSpk = (clone $baseQuery)->where('status', 'Draft')->count();
         $avgProgress = (int) round((clone $baseQuery)->avg('total_progress') ?? 0);
 
         $query = MoldRequest::with(['stages', 'materials', 'creator']);
@@ -32,7 +37,8 @@ class MoldRequestController extends Controller
                 $q->where('spk_number', 'like', "%{$search}%")
                   ->orWhere('mold_name', 'like', "%{$search}%")
                   ->orWhere('customer', 'like', "%{$search}%")
-                  ->orWhere('pic_name', 'like', "%{$search}%");
+                  ->orWhere('pic_name', 'like', "%{$search}%")
+                  ->orWhere('notes', 'like', "%{$search}%");
             });
         }
 
@@ -40,21 +46,31 @@ class MoldRequestController extends Controller
             $query->where('status', $statusFilter);
         }
 
-        $moldRequests = $query->orderBy('id', 'desc')->paginate(10);
+        $moldRequests = $query->orderBy('id', 'desc')->paginate($perPage)->withQueryString();
 
         return view('mold-requests.index', compact(
             'moldRequests',
             'search',
             'statusFilter',
+            'perPage',
             'totalSpk',
             'inProgressSpk',
             'completedSpk',
+            'draftSpk',
             'avgProgress'
         ));
     }
 
     public function store(Request $request)
     {
+        $spkNumber = trim($request->spk_number ?? '');
+        if (empty($spkNumber)) {
+            $yearMonth = Carbon::now()->format('Ym');
+            $randSeq = str_pad(mt_rand(1, 9999), 4, '0', STR_PAD_LEFT);
+            $spkNumber = "SPK-{$yearMonth}-{$randSeq}";
+            $request->merge(['spk_number' => $spkNumber]);
+        }
+
         $request->validate([
             'spk_number' => 'required|string|unique:mold_requests,spk_number|max:100',
             'mold_name' => 'required|string|max:255',
@@ -66,7 +82,7 @@ class MoldRequestController extends Controller
         ]);
 
         $moldRequest = MoldRequest::create([
-            'spk_number' => trim($request->spk_number),
+            'spk_number' => $spkNumber,
             'mold_name' => trim($request->mold_name),
             'customer' => trim($request->customer),
             'pic_name' => $request->pic_name ? trim($request->pic_name) : null,
